@@ -1,3 +1,5 @@
+// This code is licensed under the New BSD license.
+// See README.txt for more details.
 #include <iostream>
 
 #include "llvm/Support/raw_ostream.h"

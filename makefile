@@ -1,3 +1,6 @@
+# This code is licensed under the New BSD license.
+# See README.txt for more details.
+
 CXX = g++
 CXXFLAGS = -g -c -Wall -ansi -pedantic -fno-rtti
 DEFS =  -D__STDC_LIMIT_MACROS=0 \
