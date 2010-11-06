@@ -48,5 +48,21 @@ int main()
 		sourceManager,
 		headerSearch);
 
+
+	const clang::FileEntry *pFile = fileManager.getFile("test.c");
+	sourceManager.createMainFileID(pFile);
+	preprocessor.EnterMainSourceFile();
+
+	clang::Token token;
+	do {
+		preprocessor.Lex(token);
+		if( diagnostic.hasErrorOccurred())
+		{
+			break;
+		}
+		preprocessor.DumpToken(token);
+		std::cerr << std::endl;
+	} while( token.isNot(clang::tok::eof));
+
 	return 0;
 }
