@@ -1,4 +1,7 @@
-#include <stdio.h>
+//#include <stdio.h>
+
+int i = 4;
+extern int j;
 
 int main()
 {

@@ -28,8 +28,45 @@
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Sema/Sema.h"
+#include "clang/AST/DeclBase.h"
+#include "clang/AST/Type.h"
+#include "clang/AST/Decl.h"
+#include "clang/Sema/Lookup.h"
+#include "clang/Sema/Ownership.h"
+#include "clang/AST/DeclGroup.h"
 
 #include "clang/Parse/Parser.h"
+
+#include "clang/Parse/ParseAST.h"
+
+class MyASTConsumer : public clang::ASTConsumer
+{
+public:
+    MyASTConsumer() : clang::ASTConsumer() { }
+    virtual ~MyASTConsumer() { }
+
+    virtual void HandleTopLevelDecl( clang::DeclGroupRef d)
+    {
+        static int count = 0;
+        clang::DeclGroupRef::iterator it;
+        for( it = d.begin(); it != d.end(); it++)
+        {
+            count++;
+            clang::VarDecl *vd = dyn_cast<clang::VarDecl>(*it);
+            if(!vd)
+            {
+                continue;
+            }
+            std::cout << vd << std::endl;
+            if( vd->isFileVarDecl() && vd->hasExternalStorage() )
+            {
+                std::cerr << "Read top-level variable decl: '";
+                std::cerr << vd->getDeclName().getAsString() ;
+                std::cerr << std::endl;
+            }
+        }
+    }
+};
 
 int main()
 {
@@ -105,7 +142,7 @@ int main()
 		
 	const clang::FileEntry *pFile = fileManager.getFile("test.c");
 	sourceManager.createMainFileID(pFile);
-	preprocessor.EnterMainSourceFile();
+	//preprocessor.EnterMainSourceFile();
 
     const clang::TargetInfo &targetInfo = *pTargetInfo;
 
@@ -121,29 +158,19 @@ int main()
         selectorTable,
         builtinContext,
         0 /* size_reserve*/);
-    clang::ASTConsumer astConsumer;
+   // clang::ASTConsumer astConsumer;
+   MyASTConsumer astConsumer;
 
     clang::Sema sema(
         preprocessor,
         astContext,
         astConsumer);
+    sema.Initialize();
 
-    clang::Parser parser( preprocessor, sema);
-    parser.ParseTranslationUnit();
-    identifierTable.PrintStats();
+   //MySemanticAnalisys mySema( preprocessor, astContext, astConsumer);
 
-    /*
-	clang::Token token;
-	do {
-		preprocessor.Lex(token);
-		if( diagnostic.hasErrorOccurred())
-		{
-			break;
-		}
-		preprocessor.DumpToken(token);
-		std::cerr << std::endl;
-	} while( token.isNot(clang::tok::eof));
-    */
-
+    //clang::Parser parser( preprocessor, sema);
+    //parser.ParseTranslationUnit();
+    clang::ParseAST(preprocessor, &astConsumer, astContext); 
 	return 0;
 }
