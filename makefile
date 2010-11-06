@@ -8,6 +8,10 @@ OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = tutorial
 LIBS =  -ldl \
 	-lpthread \
+    -lclangParse \
+    -lclangSema \
+    -lclangAnalysis \
+    -lclangAST \
 	-lclangFrontend \
 	-lclangLex \
 	-lclangBasic \

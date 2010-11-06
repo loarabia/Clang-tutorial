@@ -22,6 +22,14 @@
 #include "clang/Frontend/PreprocessorOptions.h"
 #include "clang/Frontend/FrontendOptions.h"
 
+#include "clang/Basic/IdentifierTable.h"
+#include "clang/Basic/Builtins.h"
+
+#include "clang/AST/ASTContext.h"
+#include "clang/AST/ASTConsumer.h"
+#include "clang/Sema/Sema.h"
+
+#include "clang/Parse/Parser.h"
 
 int main()
 {
@@ -39,6 +47,32 @@ int main()
 	clang::HeaderSearch headerSearch(fileManager);
 
 	clang::HeaderSearchOptions headerSearchOptions;
+	// <Warning!!> -- Platform Specific Code lives here
+	// This depends on A) that you're running linux and
+	// B) that you have the same GCC LIBs installed that
+	// I do. 
+	// Search through Clang itself for something like this,
+	// go on, you won't find it. The reason why is Clang
+	// has its own versions of std* which are installed under 
+	// /usr/local/lib/clang/<version>/include/
+	// See somewhere around Driver.cpp:77 to see Clang adding
+	// its version of the headers to its include path.
+	headerSearchOptions.AddPath("/usr/include/linux",
+			clang::frontend::Angled,
+			false,
+			false,
+			false);
+	headerSearchOptions.AddPath("/usr/include/c++/4.4/tr1",
+			clang::frontend::Angled,
+			false,
+			false,
+			false);
+	headerSearchOptions.AddPath("/usr/include/c++/4.4",
+			clang::frontend::Angled,
+			false,
+			false,
+			false);
+	// </Warning!!> -- End of Platform Specific Code
 
 	clang::TargetOptions targetOptions;
 	targetOptions.Triple = llvm::sys::getHostTriple();
@@ -73,6 +107,32 @@ int main()
 	sourceManager.createMainFileID(pFile);
 	preprocessor.EnterMainSourceFile();
 
+    const clang::TargetInfo &targetInfo = *pTargetInfo;
+
+    clang::IdentifierTable identifierTable(languageOptions);
+    clang::SelectorTable selectorTable;
+
+    clang::Builtin::Context builtinContext(targetInfo);
+    clang::ASTContext astContext(
+        languageOptions,
+        sourceManager,
+        targetInfo,
+        identifierTable,
+        selectorTable,
+        builtinContext,
+        0 /* size_reserve*/);
+    clang::ASTConsumer astConsumer;
+
+    clang::Sema sema(
+        preprocessor,
+        astContext,
+        astConsumer);
+
+    clang::Parser parser( preprocessor, sema);
+    parser.ParseTranslationUnit();
+    identifierTable.PrintStats();
+
+    /*
 	clang::Token token;
 	do {
 		preprocessor.Lex(token);
@@ -83,6 +143,7 @@ int main()
 		preprocessor.DumpToken(token);
 		std::cerr << std::endl;
 	} while( token.isNot(clang::tok::eof));
+    */
 
 	return 0;
 }
