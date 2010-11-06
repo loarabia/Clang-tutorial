@@ -12,10 +12,15 @@
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Basic/FileManager.h"
 
+#include "clang/Frontend/HeaderSearchOptions.h"
+#include "clang/Frontend/Utils.h"
+
 #include "clang/Basic/TargetOptions.h"
 #include "clang/Basic/TargetInfo.h"
 
 #include "clang/Lex/Preprocessor.h"
+#include "clang/Frontend/PreprocessorOptions.h"
+#include "clang/Frontend/FrontendOptions.h"
 
 
 int main()
@@ -33,6 +38,8 @@ int main()
 	clang::FileManager fileManager;
 	clang::HeaderSearch headerSearch(fileManager);
 
+	clang::HeaderSearchOptions headerSearchOptions;
+
 	clang::TargetOptions targetOptions;
 	targetOptions.Triple = llvm::sys::getHostTriple();
 
@@ -41,6 +48,12 @@ int main()
 			diagnostic,
 			targetOptions);
 
+	clang::ApplyHeaderSearchOptions(
+		headerSearch,
+		headerSearchOptions,
+		languageOptions,
+		pTargetInfo->getTriple());
+
 	clang::Preprocessor preprocessor(
 		diagnostic,
 		languageOptions,
@@ -48,7 +61,14 @@ int main()
 		sourceManager,
 		headerSearch);
 
-
+	clang::PreprocessorOptions preprocessorOptions;
+	clang::FrontendOptions frontendOptions;
+	clang::InitializePreprocessor(
+		preprocessor,
+		preprocessorOptions,
+		headerSearchOptions,
+		frontendOptions);
+		
 	const clang::FileEntry *pFile = fileManager.getFile("test.c");
 	sourceManager.createMainFileID(pFile);
 	preprocessor.EnterMainSourceFile();
