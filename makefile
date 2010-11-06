@@ -3,9 +3,13 @@ CXXFLAGS = -g -c -Wall -ansi -pedantic -fno-rtti
 DEFS =  -D__STDC_LIMIT_MACROS=0 \
 	-D__STDC_CONSTANT_MACROS=0
 INCLUDES = -I/usr/local/include
-SOURCES = tutorial.cpp
+SOURCES = tutorial1.cpp \
+    tutorial2.cpp \
+    tutorial3.cpp \
+    tutorial4.cpp \
+    tutorial6.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
-EXECUTABLE = tutorial
+EXES = $(OBJECTS:.o=)
 LIBS =  -ldl \
 	-lpthread \
     -lclangParse \
@@ -17,16 +21,17 @@ LIBS =  -ldl \
 	-lclangBasic \
 	-lLLVMSupport \
 	-lLLVMSystem \
+    -lLLVMCore \
 	-lLLVMMC 
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(EXES)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CXX) $(OBJECTS) $(LIBS) -o $@ 
+$(EXES): $(OBJECTS)
+	$(CXX) -o $@ $(LIBS) $@.o 
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $(DEFS) $(LOCAL_INCLUDES) $< -o $@
 
 clean:
-	-rm $(EXECUTABLE)
+	-rm $(EXES)
 	-rm $(OBJECTS)

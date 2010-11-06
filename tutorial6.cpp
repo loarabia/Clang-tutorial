@@ -7,6 +7,7 @@
 #include "clang/Frontend/TextDiagnosticPrinter.h"
 
 #include "clang/Basic/LangOptions.h"
+#include "clang/Basic/FileSystemOptions.h"
 
 #include "clang/Basic/SourceManager.h"
 #include "clang/Lex/HeaderSearch.h"
@@ -78,10 +79,14 @@ int main()
 	clang::Diagnostic diagnostic(pTextDiagnosticPrinter);
 
 	clang::LangOptions languageOptions;
-
-	clang::SourceManager sourceManager(diagnostic);
 	clang::FileManager fileManager;
-	clang::HeaderSearch headerSearch(fileManager);
+    clang::FileSystemOptions fileSystemOptions;
+
+	clang::SourceManager sourceManager(
+        diagnostic,
+        fileManager,
+        fileSystemOptions);
+	clang::HeaderSearch headerSearch(fileManager, fileSystemOptions);
 
 	clang::HeaderSearchOptions headerSearchOptions;
 	// <Warning!!> -- Platform Specific Code lives here
@@ -136,11 +141,14 @@ int main()
 	clang::FrontendOptions frontendOptions;
 	clang::InitializePreprocessor(
 		preprocessor,
+        fileSystemOptions,
 		preprocessorOptions,
 		headerSearchOptions,
 		frontendOptions);
 		
-	const clang::FileEntry *pFile = fileManager.getFile("test.c");
+	const clang::FileEntry *pFile = fileManager.getFile(
+        "test.c",
+        fileSystemOptions);
 	sourceManager.createMainFileID(pFile);
 	//preprocessor.EnterMainSourceFile();
 
