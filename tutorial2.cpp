@@ -28,18 +28,18 @@ int main()
 		new clang::TextDiagnosticPrinter(
 			llvm::outs(),
 			diagnosticOptions);
-	clang::Diagnostic diagnostic(pTextDiagnosticPrinter);
+	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
+	// THis cannot be right
+	clang::Diagnostic diagnostic(pDiagIDs, pTextDiagnosticPrinter);
 
 	clang::LangOptions languageOptions;
-	clang::FileManager fileManager;
-    clang::FileSystemOptions fileSystemOptions;
-
+	clang::FileSystemOptions fileSystemOptions;
+	clang::FileManager fileManager(fileSystemOptions);
 
 	clang::SourceManager sourceManager(
         diagnostic,
-        fileManager,
-        fileSystemOptions);
-	clang::HeaderSearch headerSearch(fileManager, fileSystemOptions);
+        fileManager);
+	clang::HeaderSearch headerSearch(fileManager);
 
 	clang::TargetOptions targetOptions;
 	targetOptions.Triple = llvm::sys::getHostTriple();
@@ -57,9 +57,7 @@ int main()
 		headerSearch);
 
 
-	const clang::FileEntry *pFile = fileManager.getFile(
-        "test.c",
-        fileSystemOptions);
+	const clang::FileEntry *pFile = fileManager.getFile("test.c");
 	sourceManager.createMainFileID(pFile);
 	preprocessor.EnterMainSourceFile();
 

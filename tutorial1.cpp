@@ -4,6 +4,7 @@
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/System/Host.h"
+#include "llvm/ADT/IntrusiveRefCntPtr.h"
 
 #include "clang/Frontend/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
@@ -28,17 +29,19 @@ int main()
 		new clang::TextDiagnosticPrinter(
 			llvm::outs(),
 			diagnosticOptions);
-	clang::Diagnostic diagnostic(pTextDiagnosticPrinter);
+	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
+	//clang::DiagnosticIDs diagIDs;
+	
+	clang::Diagnostic diagnostic(pDiagIDs, pTextDiagnosticPrinter); // THis cannot be right
 
 	clang::LangOptions languageOptions;
-	clang::FileManager fileManager;
-    clang::FileSystemOptions fileSystemOptions;
+	clang::FileSystemOptions fileSystemOptions;
+	clang::FileManager fileManager(fileSystemOptions);
 
 	clang::SourceManager sourceManager(
         diagnostic,
-        fileManager,
-        fileSystemOptions);
-	clang::HeaderSearch headerSearch(fileManager, fileSystemOptions);
+        fileManager);
+	clang::HeaderSearch headerSearch(fileManager);
 
 	clang::TargetOptions targetOptions;
 	targetOptions.Triple = llvm::sys::getHostTriple();

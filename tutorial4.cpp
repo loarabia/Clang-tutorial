@@ -41,17 +41,17 @@ int main()
 		new clang::TextDiagnosticPrinter(
 			llvm::outs(),
 			diagnosticOptions);
-	clang::Diagnostic diagnostic(pTextDiagnosticPrinter);
+	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
+	clang::Diagnostic diagnostic(pDiagIDs, pTextDiagnosticPrinter);
 
 	clang::LangOptions languageOptions;
-	clang::FileManager fileManager;
-    clang::FileSystemOptions fileSystemOptions;
+	clang::FileSystemOptions fileSystemOptions;
+	clang::FileManager fileManager(fileSystemOptions);
 
 	clang::SourceManager sourceManager(
         diagnostic,
-        fileManager,
-        fileSystemOptions);
-	clang::HeaderSearch headerSearch(fileManager, fileSystemOptions);
+        fileManager);
+	clang::HeaderSearch headerSearch(fileManager);
 
 	clang::HeaderSearchOptions headerSearchOptions;
 	// <Warning!!> -- Platform Specific Code lives here
@@ -106,14 +106,12 @@ int main()
 	clang::FrontendOptions frontendOptions;
 	clang::InitializePreprocessor(
 		preprocessor,
-        fileSystemOptions,
 		preprocessorOptions,
 		headerSearchOptions,
 		frontendOptions);
 		
 	const clang::FileEntry *pFile = fileManager.getFile(
-        "test.c",
-        fileSystemOptions);
+        "test.c");
 	sourceManager.createMainFileID(pFile);
 	preprocessor.EnterMainSourceFile();
 
