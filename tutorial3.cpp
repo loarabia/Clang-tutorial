@@ -80,6 +80,7 @@ int main()
         "test.c");
 	sourceManager.createMainFileID(pFile);
 	preprocessor.EnterMainSourceFile();
+    pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
 
 	clang::Token token;
 	do {
@@ -91,6 +92,7 @@ int main()
 		preprocessor.DumpToken(token);
 		std::cerr << std::endl;
 	} while( token.isNot(clang::tok::eof));
+    pTextDiagnosticPrinter->EndSourceFile();
 
 	return 0;
 }

@@ -137,7 +137,9 @@ int main()
         astConsumer);
 
     clang::Parser parser( preprocessor, sema);
+    pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
     parser.ParseTranslationUnit();
+    pTextDiagnosticPrinter->EndSourceFile();
     identifierTable.PrintStats();
 
     /*

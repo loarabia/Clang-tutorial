@@ -179,6 +179,8 @@ int main()
 
     //clang::Parser parser( preprocessor, sema);
     //parser.ParseTranslationUnit();
+    pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
     clang::ParseAST(preprocessor, &astConsumer, astContext); 
+    pTextDiagnosticPrinter->EndSourceFile();
 	return 0;
 }
