@@ -1,11 +1,12 @@
-CXX = g++
-LLVMFLAGS = $(shell llvm-config --cxxflags --ldflags --libs)
+CXXFLAGS = $(shell llvm-config --cxxflags)
+LLVMLDFLAGS = $(shell llvm-config --ldflags --libs)
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
     tutorial3.cpp \
     tutorial4.cpp \
     tutorial6.cpp
-EXES = $(SOURCES:.cpp=)
+OBJECTS = $(SOURCES:.cpp=.o)
+EXES = $(OBJECTS:.o=)
 CLANGLIBS = -lclangParse \
     -lclangSema \
     -lclangAnalysis \
@@ -16,10 +17,10 @@ CLANGLIBS = -lclangParse \
 	-lLLVMSupport \
 	-lLLVMSystem \
 
-all: $(SOURCES) $(EXES)
+all: $(OBJECTS) $(EXES)
 
-$(EXES): $(SOURCES)
-	$(CXX) -o $@ $@.cpp $(CLANGLIBS) $(LLVMFLAGS)
+%: %.o
+	$(CXX) -o $@ $< $(CLANGLIBS) $(LLVMLDFLAGS)
 
 clean:
-	-rm -f $(EXES) *~
+	-rm -f $(EXES) $(OBJECTS) *~
