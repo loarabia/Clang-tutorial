@@ -1,5 +1,5 @@
-CXXFLAGS = $(shell llvm-config --cxxflags)
-LLVMLDFLAGS = $(shell llvm-config --ldflags --libs)
+CXXFLAGS := $(shell llvm-config --cxxflags)
+LLVMLDFLAGS := $(shell llvm-config --ldflags --libs)
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
     tutorial3.cpp \
