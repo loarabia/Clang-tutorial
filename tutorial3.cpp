@@ -69,6 +69,10 @@ int main()
 		headerSearch);
 
 	clang::PreprocessorOptions preprocessorOptions;
+    // disable predefined Macros so that you only see the tokens from your 
+    // source file.
+    preprocessorOptions.UsePredefines = false;
+
 	clang::FrontendOptions frontendOptions;
 	clang::InitializePreprocessor(
 		preprocessor,
