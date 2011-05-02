@@ -1,4 +1,4 @@
-//#include <stdio.h>
+#include <stdio.h>
 // This code is licensed under the New BSD license.
 // See README.txt for more details.
 
