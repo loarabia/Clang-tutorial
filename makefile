@@ -1,5 +1,6 @@
+LLVMCOMPONENTS := backend
 CXXFLAGS := $(shell llvm-config --cxxflags)
-LLVMLDFLAGS := $(shell llvm-config --ldflags --libs)
+LLVMLDFLAGS := $(shell llvm-config --ldflags --libs $(LLVMCOMPONENTS))
 DDD := $(shell echo $(LLVMLDFLAGS))
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
