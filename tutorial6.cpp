@@ -4,6 +4,7 @@
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Host.h"
+#include "llvm/Support/Casting.h"
 
 #include "clang/Frontend/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
@@ -55,7 +56,7 @@ public:
         for( it = d.begin(); it != d.end(); it++)
         {
             count++;
-            clang::VarDecl *vd = dyn_cast<clang::VarDecl>(*it);
+            clang::VarDecl *vd = llvm::dyn_cast<clang::VarDecl>(*it);
             if(!vd)
             {
                 continue;
