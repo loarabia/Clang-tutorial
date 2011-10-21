@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LLVMLibs>clangParse.lib;clangSema.lib;clangAnalysis.lib;clangAST.lib;clangFrontend.lib;clangLex.lib;clangBasic.lib;LLVMSupport.lib;LLVMSystem.lib;LLVMCore.lib;LLVMMC.lib;</LLVMLibs>
+    <LLVMLibs>clangParse.lib;clangSerialization.lib;clangDriver.lib;clangSema.lib;clangAnalysis.lib;clangAST.lib;clangFrontend.lib;clangLex.lib;clangBasic.lib;LLVMSupport.lib;LLVMSystem.lib;LLVMCore.lib;LLVMMC.lib;</LLVMLibs>
     <LLVMLibsDirs>C:\Users\larry\Code\llvm\lib\Debug;</LLVMLibsDirs>
     <LLVMIncludes>C:\Users\larry\Code\llvm\tools\clang\include;C:\Users\larry\Code\llvm\include;</LLVMIncludes>
   </PropertyGroup>
