@@ -20,6 +20,7 @@
 #include "clang/Basic/TargetInfo.h"
 
 #include "clang/Lex/Preprocessor.h"
+#include "clang/Frontend/CompilerInstance.h"
 
 
 int main()
@@ -32,14 +33,15 @@ int main()
 	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
 	//clang::DiagnosticIDs diagIDs;
 	
-	clang::Diagnostic diagnostic(pDiagIDs, pTextDiagnosticPrinter); // THis cannot be right
+    clang::DiagnosticsEngine *pDiagnosticsEngine =
+        new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
+	clang::Diagnostic diagnostic(pDiagnosticsEngine);
 
 	clang::LangOptions languageOptions;
 	clang::FileSystemOptions fileSystemOptions;
 	clang::FileManager fileManager(fileSystemOptions);
-\
 	clang::SourceManager sourceManager(
-        diagnostic,
+        *pDiagnosticsEngine,
         fileManager);
 	clang::HeaderSearch headerSearch(fileManager);
 
@@ -48,15 +50,17 @@ int main()
 
 	clang::TargetInfo *pTargetInfo = 
 		clang::TargetInfo::CreateTargetInfo(
-			diagnostic,
+			*pDiagnosticsEngine,
 			targetOptions);
+    clang::CompilerInstance compInst;
 
 	clang::Preprocessor preprocessor(
-		diagnostic,
+		*pDiagnosticsEngine,
 		languageOptions,
-		*pTargetInfo,
+		pTargetInfo,
 		sourceManager,
-		headerSearch);
+		headerSearch,
+        compInst);
 
 	return 0;
 }

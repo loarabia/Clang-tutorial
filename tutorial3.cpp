@@ -24,6 +24,7 @@
 #include "clang/Lex/Preprocessor.h"
 #include "clang/Frontend/PreprocessorOptions.h"
 #include "clang/Frontend/FrontendOptions.h"
+#include "clang/Frontend/CompilerInstance.h"
 
 
 int main()
@@ -34,14 +35,16 @@ int main()
 			llvm::outs(),
 			diagnosticOptions);
 	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
-	clang::Diagnostic diagnostic(pDiagIDs, pTextDiagnosticPrinter);
+    clang::DiagnosticsEngine *pDiagnosticsEngine =
+        new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
+	clang::Diagnostic diagnostic(pDiagnosticsEngine);
 
 	clang::LangOptions languageOptions;
 	clang::FileSystemOptions fileSystemOptions;
 	clang::FileManager fileManager(fileSystemOptions);
 
 	clang::SourceManager sourceManager(
-        diagnostic,
+        *pDiagnosticsEngine,
         fileManager);
 	clang::HeaderSearch headerSearch(fileManager);
 
@@ -52,7 +55,7 @@ int main()
 
 	clang::TargetInfo *pTargetInfo = 
 		clang::TargetInfo::CreateTargetInfo(
-			diagnostic,
+            *pDiagnosticsEngine,
 			targetOptions);
 
 	clang::ApplyHeaderSearchOptions(
@@ -61,12 +64,15 @@ int main()
 		languageOptions,
 		pTargetInfo->getTriple());
 
+    clang::CompilerInstance compInst;
+
 	clang::Preprocessor preprocessor(
-		diagnostic,
+        *pDiagnosticsEngine,
 		languageOptions,
-		*pTargetInfo,
+		pTargetInfo,
 		sourceManager,
-		headerSearch);
+		headerSearch,
+        compInst);
 
 	clang::PreprocessorOptions preprocessorOptions;
     // disable predefined Macros so that you only see the tokens from your 
@@ -89,7 +95,7 @@ int main()
 	clang::Token token;
 	do {
 		preprocessor.Lex(token);
-		if( diagnostic.hasErrorOccurred())
+		if( pDiagnosticsEngine->hasErrorOccurred())
 		{
 			break;
 		}

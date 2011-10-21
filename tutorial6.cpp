@@ -42,6 +42,7 @@
 #include "clang/Parse/Parser.h"
 
 #include "clang/Parse/ParseAST.h"
+#include "clang/Frontend/CompilerInstance.h"
 
 class MyASTConsumer : public clang::ASTConsumer
 {
@@ -80,14 +81,16 @@ int main()
 			llvm::outs(),
 			diagnosticOptions);
 	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
-	clang::Diagnostic diagnostic(pDiagIDs, pTextDiagnosticPrinter);
+    clang::DiagnosticsEngine *pDiagnosticsEngine =
+        new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
+	clang::Diagnostic diagnostic(pDiagnosticsEngine);
 
 	clang::LangOptions languageOptions;
 	clang::FileSystemOptions fileSystemOptions;
 	clang::FileManager fileManager(fileSystemOptions);
 
 	clang::SourceManager sourceManager(
-        diagnostic,
+        *pDiagnosticsEngine,
         fileManager);
 	clang::HeaderSearch headerSearch(fileManager);
 
@@ -124,7 +127,7 @@ int main()
 
 	clang::TargetInfo *pTargetInfo = 
 		clang::TargetInfo::CreateTargetInfo(
-			diagnostic,
+            *pDiagnosticsEngine,
 			targetOptions);
 
 	clang::ApplyHeaderSearchOptions(
@@ -133,12 +136,15 @@ int main()
 		languageOptions,
 		pTargetInfo->getTriple());
 
+    clang::CompilerInstance compInst;
+
 	clang::Preprocessor preprocessor(
-		diagnostic,
+        *pDiagnosticsEngine,
 		languageOptions,
-		*pTargetInfo,
+		pTargetInfo,
 		sourceManager,
-		headerSearch);
+		headerSearch,
+        compInst);
 
 	clang::PreprocessorOptions preprocessorOptions;
 	clang::FrontendOptions frontendOptions;
@@ -158,11 +164,12 @@ int main()
     clang::IdentifierTable identifierTable(languageOptions);
     clang::SelectorTable selectorTable;
 
-    clang::Builtin::Context builtinContext(targetInfo);
+    clang::Builtin::Context builtinContext;
+    builtinContext.InitializeTarget(targetInfo);
     clang::ASTContext astContext(
         languageOptions,
         sourceManager,
-        targetInfo,
+        pTargetInfo,
         identifierTable,
         selectorTable,
         builtinContext,
@@ -174,7 +181,7 @@ int main()
         preprocessor,
         astContext,
         astConsumer);
-    sema.Initialize();
+    //sema.Initialize();
 
    //MySemanticAnalisys mySema( preprocessor, astContext, astConsumer);
 

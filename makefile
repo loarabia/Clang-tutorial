@@ -12,6 +12,8 @@ SOURCES = tutorial1.cpp \
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
 CLANGLIBS = -lclangParse \
+    -lclangSerialization \
+    -lclangDriver \
     -lclangSema \
     -lclangAnalysis \
     -lclangAST \
