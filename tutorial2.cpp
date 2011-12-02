@@ -42,10 +42,10 @@ int main()
 	clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-	clang::HeaderSearch headerSearch(fileManager);
+	clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
 
 	clang::TargetOptions targetOptions;
-	targetOptions.Triple = llvm::sys::getHostTriple();
+	targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
 
 	clang::TargetInfo *pTargetInfo = 
 		clang::TargetInfo::CreateTargetInfo(

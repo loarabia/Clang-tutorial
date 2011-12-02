@@ -19,6 +19,7 @@ CLANGLIBS = -lclangParse \
     -lclangAST \
 	-lclangFrontend \
 	-lclangLex \
+    -lLLVMMC \
 	-lclangBasic \
 	-lLLVMSupport \
 
