@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <!-- Modify these properties to point to your svn / git llvm and clang repository. -->
+    <LocalUserDir>C:\Users\larry</LocalUserDir>
+    <LLVMSourceDir>$(LocalUserDir)\Code\llvm</LLVMSourceDir>
+    <ClangSourceDir>$(LLVMSourceDir)\tools\clang</ClangSourceDir>
+    <LLVMBuildDir>$(LocalUserDir)\Code\llvm_build</LLVMBuildDir>
+    <ClangBuildDir>$(LLVMBuildDir)\tools\clang</ClangBuildDir>
+
+    <!-- libs and includes required by all tutorials. -->
     <LLVMLibs>clangParse.lib;clangSerialization.lib;clangDriver.lib;clangIndex.lib;clangSema.lib;clangAnalysis.lib;clangAST.lib;clangFrontend.lib;clangLex.lib;clangBasic.lib;LLVMSupport.lib;LLVMCore.lib;LLVMMC.lib;</LLVMLibs>
-    <LLVMLibsDirs>C:\Users\larry\Code\llvm_build\lib\Debug;</LLVMLibsDirs>
-    <LLVMIncludes>C:\Users\larry\Code\llvm\tools\clang\include;C:\Users\larry\Code\llvm\include;C:\Users\larry\Code\llvm_build\include;C:\Users\larry\Code\llvm_build\tools\clang\include;</LLVMIncludes>
+    <LLVMLibsDirs>$(LLVMBuildDir)\lib\Debug;</LLVMLibsDirs>
+    <LLVMIncludes>$(ClangSourceDir)\include;$(LLVMSourceDir)\include;$(LLVMBuildDir)\include;$(ClangBuildDir)\include;</LLVMIncludes>
   </PropertyGroup>
 </Project>
