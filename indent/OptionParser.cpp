@@ -1,8 +1,13 @@
+/******************************************************************************
+ * Copyright Larry Olson
+ * Source is Licensed under the NewBSD License, See ../LICENSE.txt
+ *****************************************************************************/
 #include "OptionParser.h"
+
 string OptionParser::InputFilename;
 
 /******************************************************************************
- * Required Argument: InputFile 
+ * Required Command Line Argument: InputFile 
  *  This file will be read, parsed, and rewritten.
  *
  * Note: The BSD and GNU Indent tool can also read in from stdin. Because of
