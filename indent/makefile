@@ -7,7 +7,8 @@ CXXFLAGS := $(shell llvm-config --cxxflags) $(RTTIFLAG)
 LLVMLDFLAGS := $(shell llvm-config --ldflags --libs $(LLVMCOMPONENTS))
 
 SOURCES = main.cpp \
-    OptionParser.cpp
+    OptionParser.cpp \
+    Indenter.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 CLANGLIBS = -lclangParse \

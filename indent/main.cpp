@@ -6,7 +6,9 @@
  * the tool, set it up and tear it down here.
  *****************************************************************************/
 #include "llvm/Support/CommandLine.h"
+
 #include "OptionParser.h"
+#include "Indenter.h"
 
 /******************************************************************************
  * Main parses the args, instantiates an indenter object, and runs the indenter
@@ -17,6 +19,7 @@ int main(int argc, char **argv)
     using namespace llvm;
 
     cl::ParseCommandLineOptions(argc, argv); 
+    Indenter indenter(OptionParser::InputFilename);
 
     return 0;
 }

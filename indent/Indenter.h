@@ -5,14 +5,21 @@
 #ifndef INDENTER_H 
 #define INDENTER_H 
 
-using namespace std;
+#include <string>
+
+#include "llvm/Support/Path.h"
+
+using std::string;
+using llvm::sys::Path;
 
 /******************************************************************************
  *
  *****************************************************************************/
 class Indenter {
-
+    private:
+        Path InputFile;
+    public:
+        Indenter(string);
 };
-
 
 #endif
