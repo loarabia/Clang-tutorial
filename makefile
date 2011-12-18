@@ -9,7 +9,8 @@ SOURCES = tutorial1.cpp \
     tutorial3.cpp \
     tutorial4.cpp \
     tutorial6.cpp \
-    tutorial1_CI.cpp
+    tutorial1_CI.cpp \
+    tutorial2_CI.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
