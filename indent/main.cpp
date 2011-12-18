@@ -20,6 +20,7 @@ int main(int argc, char **argv)
 
     cl::ParseCommandLineOptions(argc, argv); 
     Indenter indenter(OptionParser::InputFilename);
+    indenter.initializePreprocessor();
 
     return 0;
 }
