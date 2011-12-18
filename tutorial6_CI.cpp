@@ -19,7 +19,6 @@
 #include "clang/Basic/Diagnostic.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/ASTConsumer.h"
-#include "clang/Basic/LangOptions.h"
 #include "clang/Parse/Parser.h"
 #include "clang/Parse/ParseAST.h"
 
@@ -86,7 +85,6 @@ int main()
     ci.setASTConsumer(astConsumer);
 
     ci.createASTContext();
-    ci.createSema(clang::TU_Complete, NULL);
 
 	const FileEntry *pFile = ci.getFileManager().getFile("test.c");
     ci.getSourceManager().createMainFileID(pFile);
