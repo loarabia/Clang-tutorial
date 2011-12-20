@@ -54,7 +54,7 @@ int main()
 	clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-	clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
+	clang::HeaderSearch headerSearch(fileManager);
 
 	clang::HeaderSearchOptions headerSearchOptions;
 	// <Warning!!> -- Platform Specific Code lives here
@@ -85,7 +85,7 @@ int main()
 	// </Warning!!> -- End of Platform Specific Code
 
 	clang::TargetOptions targetOptions;
-	targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+	targetOptions.Triple = llvm::sys::getHostTriple();
 
 	clang::TargetInfo *pTargetInfo = 
 		clang::TargetInfo::CreateTargetInfo(
