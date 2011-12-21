@@ -1,5 +1,5 @@
 #CXX := clang++
-LLVMCOMPONENTS := backend
+LLVMCOMPONENTS := cppbackend
 RTTIFLAG := -fno-rtti
 #RTTIFLAG :=
 CXXFLAGS := $(shell llvm-config --cxxflags) $(RTTIFLAG)
