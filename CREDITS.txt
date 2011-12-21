@@ -1,0 +1,3 @@
+Many thanks to:
+
+Nico Weber and Justin LaPre for initial versions of the tutorial 
