@@ -33,7 +33,6 @@ int main()
 	// THis cannot be right
     clang::DiagnosticsEngine *pDiagnosticsEngine =
         new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
-	clang::Diagnostic diagnostic(pDiagnosticsEngine);
 
 	clang::LangOptions languageOptions;
 	clang::FileSystemOptions fileSystemOptions;
