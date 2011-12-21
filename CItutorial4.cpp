@@ -1,4 +1,4 @@
-/***   tutorial4_CI.cpp   *****************************************************
+/***   CItutorial4.cpp   *****************************************************
  * This code is licensed under the New BSD license.
  * See LICENSE.txt for details.
  * 
