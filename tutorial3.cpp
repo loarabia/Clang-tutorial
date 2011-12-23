@@ -45,23 +45,16 @@ int main()
     clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-    clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
 
+    clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
     clang::HeaderSearchOptions headerSearchOptions;
 
     clang::TargetOptions targetOptions;
     targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
-
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
             targetOptions);
-
-    clang::ApplyHeaderSearchOptions(
-        headerSearch,
-        headerSearchOptions,
-        languageOptions,
-        pTargetInfo->getTriple());
 
     clang::CompilerInstance compInst;
 
@@ -73,10 +66,12 @@ int main()
         headerSearch,
         compInst);
 
+
     clang::PreprocessorOptions preprocessorOptions;
     // disable predefined Macros so that you only see the tokens from your 
-    // source file.
-    preprocessorOptions.UsePredefines = false;
+    // source file. Note, this has some nasty side-effects like also undefning
+    // your archictecture and things like that.
+    //preprocessorOptions.UsePredefines = false;
 
     clang::FrontendOptions frontendOptions;
     clang::InitializePreprocessor(
@@ -84,8 +79,9 @@ int main()
         preprocessorOptions,
         headerSearchOptions,
         frontendOptions);
-        
-    const clang::FileEntry *pFile = fileManager.getFile("test.c");
+
+    // Note: Changed the file from tutorial2.
+    const clang::FileEntry *pFile = fileManager.getFile("testInclude.c");
     sourceManager.createMainFileID(pFile);
     preprocessor.EnterMainSourceFile();
     pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
