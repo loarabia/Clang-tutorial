@@ -29,78 +29,78 @@
 
 int main()
 {
-	clang::DiagnosticOptions diagnosticOptions;
-	clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
-		new clang::TextDiagnosticPrinter(
-			llvm::outs(),
-			diagnosticOptions);
-	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
+    clang::DiagnosticOptions diagnosticOptions;
+    clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
+        new clang::TextDiagnosticPrinter(
+            llvm::outs(),
+            diagnosticOptions);
+    llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
     clang::DiagnosticsEngine *pDiagnosticsEngine =
         new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
 
-	clang::LangOptions languageOptions;
-	clang::FileSystemOptions fileSystemOptions;
-	clang::FileManager fileManager(fileSystemOptions);
+    clang::LangOptions languageOptions;
+    clang::FileSystemOptions fileSystemOptions;
+    clang::FileManager fileManager(fileSystemOptions);
 
-	clang::SourceManager sourceManager(
+    clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-	clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
+    clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
 
-	clang::HeaderSearchOptions headerSearchOptions;
+    clang::HeaderSearchOptions headerSearchOptions;
 
-	clang::TargetOptions targetOptions;
-	targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+    clang::TargetOptions targetOptions;
+    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
 
-	clang::TargetInfo *pTargetInfo = 
-		clang::TargetInfo::CreateTargetInfo(
+    clang::TargetInfo *pTargetInfo = 
+        clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-			targetOptions);
+            targetOptions);
 
-	clang::ApplyHeaderSearchOptions(
-		headerSearch,
-		headerSearchOptions,
-		languageOptions,
-		pTargetInfo->getTriple());
+    clang::ApplyHeaderSearchOptions(
+        headerSearch,
+        headerSearchOptions,
+        languageOptions,
+        pTargetInfo->getTriple());
 
     clang::CompilerInstance compInst;
 
-	clang::Preprocessor preprocessor(
+    clang::Preprocessor preprocessor(
         *pDiagnosticsEngine,
-		languageOptions,
-		pTargetInfo,
-		sourceManager,
-		headerSearch,
+        languageOptions,
+        pTargetInfo,
+        sourceManager,
+        headerSearch,
         compInst);
 
-	clang::PreprocessorOptions preprocessorOptions;
+    clang::PreprocessorOptions preprocessorOptions;
     // disable predefined Macros so that you only see the tokens from your 
     // source file.
     preprocessorOptions.UsePredefines = false;
 
-	clang::FrontendOptions frontendOptions;
-	clang::InitializePreprocessor(
-		preprocessor,
-		preprocessorOptions,
-		headerSearchOptions,
-		frontendOptions);
-		
-	const clang::FileEntry *pFile = fileManager.getFile("test.c");
-	sourceManager.createMainFileID(pFile);
-	preprocessor.EnterMainSourceFile();
+    clang::FrontendOptions frontendOptions;
+    clang::InitializePreprocessor(
+        preprocessor,
+        preprocessorOptions,
+        headerSearchOptions,
+        frontendOptions);
+        
+    const clang::FileEntry *pFile = fileManager.getFile("test.c");
+    sourceManager.createMainFileID(pFile);
+    preprocessor.EnterMainSourceFile();
     pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
 
-	clang::Token token;
-	do {
-		preprocessor.Lex(token);
-		if( pDiagnosticsEngine->hasErrorOccurred())
-		{
-			break;
-		}
-		preprocessor.DumpToken(token);
-		std::cerr << std::endl;
-	} while( token.isNot(clang::tok::eof));
+    clang::Token token;
+    do {
+        preprocessor.Lex(token);
+        if( pDiagnosticsEngine->hasErrorOccurred())
+        {
+            break;
+        }
+        preprocessor.DumpToken(token);
+        std::cerr << std::endl;
+    } while( token.isNot(clang::tok::eof));
     pTextDiagnosticPrinter->EndSourceFile();
 
-	return 0;
+    return 0;
 }
