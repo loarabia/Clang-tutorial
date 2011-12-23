@@ -25,41 +25,41 @@
 
 int main()
 {
-	clang::DiagnosticOptions diagnosticOptions;
-	clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
-		new clang::TextDiagnosticPrinter(
-			llvm::outs(),
-			diagnosticOptions);
-	llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
-	//clang::DiagnosticIDs diagIDs;
-	
+    clang::DiagnosticOptions diagnosticOptions;
+    clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
+        new clang::TextDiagnosticPrinter(
+            llvm::outs(),
+            diagnosticOptions);
+    llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
+    //clang::DiagnosticIDs diagIDs;
+    
     clang::DiagnosticsEngine *pDiagnosticsEngine =
         new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
 
-	clang::LangOptions languageOptions;
-	clang::FileSystemOptions fileSystemOptions;
-	clang::FileManager fileManager(fileSystemOptions);
-	clang::SourceManager sourceManager(
+    clang::LangOptions languageOptions;
+    clang::FileSystemOptions fileSystemOptions;
+    clang::FileManager fileManager(fileSystemOptions);
+    clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-	clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
+    clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
 
-	clang::TargetOptions targetOptions;
-	targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+    clang::TargetOptions targetOptions;
+    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
 
-	clang::TargetInfo *pTargetInfo = 
-		clang::TargetInfo::CreateTargetInfo(
-			*pDiagnosticsEngine,
-			targetOptions);
+    clang::TargetInfo *pTargetInfo = 
+        clang::TargetInfo::CreateTargetInfo(
+            *pDiagnosticsEngine,
+            targetOptions);
     clang::CompilerInstance compInst;
 
-	clang::Preprocessor preprocessor(
-		*pDiagnosticsEngine,
-		languageOptions,
-		pTargetInfo,
-		sourceManager,
-		headerSearch,
+    clang::Preprocessor preprocessor(
+        *pDiagnosticsEngine,
+        languageOptions,
+        pTargetInfo,
+        sourceManager,
+        headerSearch,
         compInst);
 
-	return 0;
+    return 0;
 }
