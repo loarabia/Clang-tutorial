@@ -11,17 +11,17 @@ SOURCES = tutorial1.cpp \
     tutorial6.cpp 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
-CLANGLIBS = -lclangParse \
-    -lclangSerialization \
-    -lclangDriver \
+CLANGLIBS = \
+    -lclangFrontend \
+    -lclangParse \
     -lclangSema \
     -lclangAnalysis \
     -lclangAST \
-	-lclangFrontend \
-	-lclangLex \
-    -lLLVMMC \
-	-lclangBasic \
-	-lLLVMSupport \
+    -lclangLex \
+    -lclangBasic \
+    -lclangDriver \
+    -lclangSerialization \
+
 
 all: $(OBJECTS) $(EXES)
 
