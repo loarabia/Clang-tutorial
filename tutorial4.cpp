@@ -32,6 +32,7 @@
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Sema/Sema.h"
 
+#include "clang/Parse/ParseAST.h"
 #include "clang/Parse/Parser.h"
 #include "clang/Frontend/CompilerInstance.h"
 
@@ -91,12 +92,6 @@ int main()
             *pDiagnosticsEngine,
             targetOptions);
 
-    clang::ApplyHeaderSearchOptions(
-        headerSearch,
-        headerSearchOptions,
-        languageOptions,
-        pTargetInfo->getTriple());
-
     clang::CompilerInstance compInst;
 
     clang::Preprocessor preprocessor(
@@ -118,7 +113,6 @@ int main()
     const clang::FileEntry *pFile = fileManager.getFile(
         "test.c");
     sourceManager.createMainFileID(pFile);
-    preprocessor.EnterMainSourceFile();
 
     const clang::TargetInfo &targetInfo = *pTargetInfo;
 
@@ -127,7 +121,6 @@ int main()
 
     clang::Builtin::Context builtinContext;
     builtinContext.InitializeTarget(targetInfo);
-
     clang::ASTContext astContext(
         languageOptions,
         sourceManager,
@@ -143,24 +136,10 @@ int main()
         astContext,
         astConsumer);
 
-    clang::Parser parser( preprocessor, sema);
     pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
-    parser.ParseTranslationUnit();
+    clang::ParseAST(preprocessor, &astConsumer, astContext); 
     pTextDiagnosticPrinter->EndSourceFile();
     identifierTable.PrintStats();
-
-    /*
-    clang::Token token;
-    do {
-        preprocessor.Lex(token);
-        if( diagnostic.hasErrorOccurred())
-        {
-            break;
-        }
-        preprocessor.DumpToken(token);
-        std::cerr << std::endl;
-    } while( token.isNot(clang::tok::eof));
-    */
 
     return 0;
 }

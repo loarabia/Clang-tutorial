@@ -130,12 +130,6 @@ int main()
             *pDiagnosticsEngine,
             targetOptions);
 
-    clang::ApplyHeaderSearchOptions(
-        headerSearch,
-        headerSearchOptions,
-        languageOptions,
-        pTargetInfo->getTriple());
-
     clang::CompilerInstance compInst;
 
     clang::Preprocessor preprocessor(
@@ -157,7 +151,6 @@ int main()
     const clang::FileEntry *pFile = fileManager.getFile(
         "test.c");
     sourceManager.createMainFileID(pFile);
-    //preprocessor.EnterMainSourceFile();
 
     const clang::TargetInfo &targetInfo = *pTargetInfo;
 
@@ -174,19 +167,13 @@ int main()
         selectorTable,
         builtinContext,
         0 /* size_reserve*/);
-   // clang::ASTConsumer astConsumer;
    MyASTConsumer astConsumer;
 
     clang::Sema sema(
         preprocessor,
         astContext,
         astConsumer);
-    //sema.Initialize();
 
-   //MySemanticAnalisys mySema( preprocessor, astContext, astConsumer);
-
-    //clang::Parser parser( preprocessor, sema);
-    //parser.ParseTranslationUnit();
     pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
     clang::ParseAST(preprocessor, &astConsumer, astContext); 
     pTextDiagnosticPrinter->EndSourceFile();
