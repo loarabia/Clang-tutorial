@@ -26,7 +26,7 @@ CLANGLIBS = \
 all: $(OBJECTS) $(EXES)
 
 %: %.o
-	$(CXX) -o $@ $< $(CLANGLIBS) $(LLVMLDFLAGS)
+	$(CXX) -o $@ $< $(CLANGLIBS) $(LLVMLDFLAGS) -ldl
 
 clean:
 	-rm -f $(EXES) $(OBJECTS) *~
