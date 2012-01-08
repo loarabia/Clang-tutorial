@@ -54,7 +54,9 @@ int main()
     clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-    clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
+    clang::HeaderSearch headerSearch(fileManager,
+                                     *pDiagnosticsEngine,
+                                     languageOptions);
 
     clang::HeaderSearchOptions headerSearchOptions;
     // <Warning!!> -- Platform Specific Code lives here

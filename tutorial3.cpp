@@ -46,7 +46,9 @@ int main()
         *pDiagnosticsEngine,
         fileManager);
 
-    clang::HeaderSearch headerSearch(fileManager, *pDiagnosticsEngine);
+    clang::HeaderSearch headerSearch(fileManager,
+                                     *pDiagnosticsEngine,
+                                     languageOptions);
     clang::HeaderSearchOptions headerSearchOptions;
 
     clang::TargetOptions targetOptions;
