@@ -11,8 +11,11 @@ http://www.apple.com/DTDs/PropertyList-1.0.dtd>
         /Users/loarabia/Code/Clang-tutorial/test/NightlyBuilds/DailySyncAndBuild.sh
         </string>
     </array>
-    <key>StartInterval</key>
-    <integer>60</integer>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>0</integer>
+    </dict>
     <key>StandardOutPath</key>
     <string>/Users/loarabia/Code/Logs/buildLog</string>
     <key>StandardErrorPath</key>
