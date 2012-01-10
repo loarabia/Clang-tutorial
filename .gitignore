@@ -3,3 +3,5 @@
 *.suo
 *sdf
 *.aps
+*.json
+*.o

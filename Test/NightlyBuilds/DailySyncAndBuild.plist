@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN
+http://www.apple.com/DTDs/PropertyList-1.0.dtd>
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>DailyBuild</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>
+        /Users/loarabia/Code/Clang-tutorial/test/NightlyBuilds/DailySyncAndBuild.sh
+        </string>
+    </array>
+    <key>StartInterval</key>
+    <integer>60</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/loarabia/Code/Logs/buildLog</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/loarabia/Code/Logs/buildLog</string>
+</dict>
+</plist>
