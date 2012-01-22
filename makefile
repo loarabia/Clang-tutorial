@@ -1,4 +1,4 @@
-#CXX := clang++
+CXX := clang++
 LLVMCOMPONENTS := cppbackend
 RTTIFLAG := -fno-rtti
 #RTTIFLAG :=
@@ -14,7 +14,8 @@ SOURCES = tutorial1.cpp \
     CItutorial2.cpp \
     CItutorial3.cpp \
     CItutorial4.cpp \
-    CItutorial6.cpp
+    CItutorial6.cpp \
+    CItutorial7.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
