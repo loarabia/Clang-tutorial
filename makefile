@@ -15,7 +15,7 @@ SOURCES = tutorial1.cpp \
     CItutorial3.cpp \
     CItutorial4.cpp \
     CItutorial6.cpp \
-    CItutorial7.cpp
+    CIBasicRecursiveASTVisitor.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
