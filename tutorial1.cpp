@@ -42,9 +42,6 @@ int main()
     clang::SourceManager sourceManager(
         *pDiagnosticsEngine,
         fileManager);
-    clang::HeaderSearch headerSearch(fileManager, 
-                                     *pDiagnosticsEngine,
-                                     languageOptions);
 
     clang::TargetOptions targetOptions;
     targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
@@ -53,6 +50,11 @@ int main()
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
             targetOptions);
+
+    clang::HeaderSearch headerSearch(fileManager, 
+                                     *pDiagnosticsEngine,
+                                     languageOptions,
+                                     pTargetInfo);
     clang::CompilerInstance compInst;
 
     clang::Preprocessor preprocessor(
