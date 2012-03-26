@@ -9,7 +9,7 @@
     <ClangBuildDir>$(LLVMBuildDir)\tools\clang</ClangBuildDir>
 
     <!-- libs and includes required by all tutorials. -->
-    <LLVMLibs>clangParse.lib;clangSerialization.lib;clangDriver.lib;clangIndex.lib;clangSema.lib;clangAnalysis.lib;clangAST.lib;clangFrontend.lib;clangLex.lib;clangBasic.lib;LLVMSupport.lib;LLVMCore.lib;LLVMMC.lib;</LLVMLibs>
+    <LLVMLibs>clangParse.lib;clangSerialization.lib;clangDriver.lib;clangIndex.lib;clangSema.lib;clangAnalysis.lib;clangAST.lib;clangFrontend.lib;clangEdit.lib;clangLex.lib;clangBasic.lib;LLVMSupport.lib;LLVMCore.lib;LLVMMC.lib;</LLVMLibs>
     <LLVMLibsDirs>$(LLVMBuildDir)\lib\Debug;</LLVMLibsDirs>
     <LLVMIncludes>$(ClangSourceDir)\include;$(LLVMSourceDir)\include;$(LLVMBuildDir)\include;$(ClangBuildDir)\include;</LLVMIncludes>
   </PropertyGroup>
