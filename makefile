@@ -21,6 +21,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
 CLANGLIBS = \
     -lclangFrontend \
+    -lclangEdit \
     -lclangParse \
     -lclangSema \
     -lclangAnalysis \
