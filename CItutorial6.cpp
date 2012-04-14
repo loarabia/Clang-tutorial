@@ -43,8 +43,7 @@ public:
             {
                 continue;
             }
-            std::cout << vd << std::endl;
-            if( vd->isFileVarDecl() && vd->hasExternalStorage() )
+            if( vd->isFileVarDecl() && !vd->hasExternalStorage() )
             {
                 std::cerr << "Read top-level variable decl: '";
                 std::cerr << vd->getDeclName().getAsString() ;
@@ -86,7 +85,7 @@ int main()
 
     ci.createASTContext();
 
-	const FileEntry *pFile = ci.getFileManager().getFile("test.c");
+	const FileEntry *pFile = ci.getFileManager().getFile("input04.c");
     ci.getSourceManager().createMainFileID(pFile);
     ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
                                              &ci.getPreprocessor());

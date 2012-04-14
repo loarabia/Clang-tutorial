@@ -62,8 +62,7 @@ public:
             {
                 continue;
             }
-            std::cout << vd << std::endl;
-            if( vd->isFileVarDecl() && vd->hasExternalStorage() )
+            if( vd->isFileVarDecl() && !vd->hasExternalStorage() )
             {
                 std::cerr << "Read top-level variable decl: '";
                 std::cerr << vd->getDeclName().getAsString() ;
@@ -152,7 +151,7 @@ int main()
         frontendOptions);
         
     const clang::FileEntry *pFile = fileManager.getFile(
-        "test.c");
+        "input04.c");
     sourceManager.createMainFileID(pFile);
 
     const clang::TargetInfo &targetInfo = *pTargetInfo;
