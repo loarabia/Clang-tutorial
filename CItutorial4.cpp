@@ -59,7 +59,7 @@ int main()
     ci.getPreprocessor().EnterMainSourceFile();
     ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
                                              &ci.getPreprocessor());
-    Parser parser(ci.getPreprocessor(), ci.getSema());
+    Parser parser(ci.getPreprocessor(), ci.getSema(), false /*skipFunctionBodies*/);
     parser.ParseTranslationUnit();
     ci.getDiagnosticClient().EndSourceFile();
     ci.getASTContext().Idents.PrintStats();

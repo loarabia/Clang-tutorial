@@ -15,7 +15,8 @@ SOURCES = tutorial1.cpp \
     CItutorial3.cpp \
     CItutorial4.cpp \
     CItutorial6.cpp \
-    CIBasicRecursiveASTVisitor.cpp
+    CIBasicRecursiveASTVisitor.cpp \
+    CIrewriter.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
@@ -32,6 +33,7 @@ CLANGLIBS = \
     -lclangSerialization \
     -lLLVMMC \
     -lLLVMSupport \
+    -lclangRewrite
 
 all: $(OBJECTS) $(EXES)
 
