@@ -22,18 +22,18 @@ OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
 CLANGLIBS = \
     -lclangFrontend \
-    -lclangEdit \
+    -lclangDriver \
+    -lclangSerialization \
     -lclangParse \
     -lclangSema \
     -lclangAnalysis \
+    -lclangRewrite \
+    -lclangEdit \
     -lclangAST \
     -lclangLex \
     -lclangBasic \
-    -lclangDriver \
-    -lclangSerialization \
     -lLLVMMC \
-    -lLLVMSupport \
-    -lclangRewrite
+    -lLLVMSupport
 
 all: $(OBJECTS) $(EXES)
 
