@@ -9,12 +9,12 @@ This particular set of tutorials tracks the llvm / clang mainline and is updated
 
 See contents of the links above for a walkthrough of what these tutorials are doing.
 
-# Latest Stable LLVM / Clang (v3.0) #
+# Latest Stable LLVM / Clang (v3.1) #
 The master branch tracks recent commits to the clang and llvm svn. If you want
-the latest public release, then checkout the *stable* branch.
+the latest public release, then checkout the *3.1* tag.
 
     git clone git@github.com:loarabia/Clang-tutorial.git
-    git checkout stable
+    git checkout 3.1
 
 # CI tutorials #
 The tutorials prefixed with CI are the same as the original tutorials but use the CompilerInstance object and
