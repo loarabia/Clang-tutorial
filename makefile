@@ -1,9 +1,7 @@
-CXX := clang++
-LLVMCOMPONENTS := cppbackend
-RTTIFLAG := -fno-rtti
-#RTTIFLAG :=
-CXXFLAGS := $(shell llvm-config --cxxflags) $(RTTIFLAG)
-LLVMLDFLAGS := $(shell llvm-config --ldflags --libs $(LLVMCOMPONENTS))
+CXXFLAGS_CLANG = -I/local-ssd/aelseed/sandbox/clang/llvm/tools/clang/include/ -I/local-ssd/aelseed/sandbox/clang/build/tools/clang/include 
+CXX := g++ -O0 -g $(CXXFLAGS_CLANG) $(shell llvm-config --cxxflags)
+
+LLVMLDFLAGS := $(shell llvm-config --ldflags --libs)# $(LLVMCOMPONENTS))
 DDD := $(shell echo $(LLVMLDFLAGS))
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \

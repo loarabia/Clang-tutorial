@@ -17,7 +17,9 @@
 #include "clang/Basic/SourceManager.h"
 #include "clang/Lex/Preprocessor.h"
 #include "clang/Basic/Diagnostic.h"
-
+#include "clang/Lex/HeaderSearch.h"
+#include "clang/Frontend/HeaderSearchOptions.h"
+#include "clang/Frontend/Utils.h"
 /******************************************************************************
  *
  *****************************************************************************/
@@ -28,6 +30,8 @@ int main()
     using clang::TargetInfo;
     using clang::FileEntry;
     using clang::Token;
+    using clang::HeaderSearch;
+    using clang::HeaderSearchOptions;
 
     CompilerInstance ci;
     ci.createDiagnostics(0,NULL);
@@ -40,9 +44,43 @@ int main()
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
     ci.createPreprocessor();
-    ci.getPreprocessorOpts().UsePredefines = false;
+    ci.getPreprocessorOpts().UsePredefines = true;
 
-	const FileEntry *pFile = ci.getFileManager().getFile("test.c");
+    HeaderSearch headerSearch(ci.getFileManager(),
+                              ci.getDiagnostics(),
+                              ci.getLangOpts(),
+                              pti);
+
+    HeaderSearchOptions headerSearchOptions;
+
+    // <Warning!!> -- Platform Specific Code lives here
+    // This depends on A) that you're running linux and
+    // B) that you have the same GCC LIBs installed that
+    // I do. 
+    // Search through Clang itself for something like this,
+    // go on, you won't find it. The reason why is Clang
+    // has its own versions of std* which are installed under 
+    // /usr/local/lib/clang/<version>/include/
+    // See somewhere around Driver.cpp:77 to see Clang adding
+    // its version of the headers to its include path.
+    headerSearchOptions.AddPath("/usr/include", 
+                                clang::frontend::Angled, 
+                                false, 
+                                false, 
+                                false);
+    headerSearchOptions.AddPath("/usr/lib/gcc/x86_64-linux-gnu/4.4.5/include",
+                                clang::frontend::Angled,
+                                false, 
+                                false,
+                                false);
+    // </Warning!!> -- End of Platform Specific Code
+
+    clang::InitializePreprocessor(ci.getPreprocessor(), 
+                                  ci.getPreprocessorOpts(),
+                                  headerSearchOptions,
+                                  ci.getFrontendOpts());
+
+	const FileEntry *pFile = ci.getFileManager().getFile("testInclude.c");
     ci.getSourceManager().createMainFileID(pFile);
     ci.getPreprocessor().EnterMainSourceFile();
     ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
