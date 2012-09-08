@@ -4,7 +4,7 @@ RTTIFLAG := -fno-rtti
 #RTTIFLAG :=
 CXXFLAGS := $(shell llvm-config --cxxflags) $(RTTIFLAG)
 LLVMLDFLAGS := $(shell llvm-config --ldflags --libs $(LLVMCOMPONENTS))
-DDD := $(shell echo $(LLVMLDFLAGS))
+
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
     tutorial3.cpp \
@@ -21,19 +21,25 @@ SOURCES = tutorial1.cpp \
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
 CLANGLIBS = \
-    -lclangFrontend \
-    -lclangDriver \
-    -lclangSerialization \
-    -lclangParse \
-    -lclangSema \
-    -lclangAnalysis \
-    -lclangRewrite \
-    -lclangEdit \
-    -lclangAST \
-    -lclangLex \
-    -lclangBasic \
-    -lLLVMMC \
-    -lLLVMSupport
+				-lclangFrontendTool\
+				-lclangFrontend\
+				-lclangDriver\
+				-lclangSerialization\
+				-lclangCodeGen\
+				-lclangParse\
+				-lclangSema\
+				-lclangStaticAnalyzerFrontend\
+				-lclangStaticAnalyzerCheckers\
+				-lclangStaticAnalyzerCore\
+				-lclangAnalysis\
+				-lclangARCMigrate\
+				-lclangRewriteFrontend\
+				-lclangRewriteCore\
+				-lclangEdit\
+				-lclangAST\
+				-lclangLex\
+				-lclangBasic\
+				$(shell llvm-config --libs)
 
 all: $(OBJECTS) $(EXES)
 
