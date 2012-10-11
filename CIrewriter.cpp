@@ -54,6 +54,7 @@
 
 #include "llvm/Support/Host.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/ADT/StringRef.h"
 
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Basic/TargetOptions.h"
@@ -66,8 +67,8 @@
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Parse/ParseAST.h"
-#include "clang/Rewrite/Rewriters.h"
-#include "clang/Rewrite/Rewriter.h"
+#include "clang/Rewrite/Frontend/Rewriters.h"
+#include "clang/Rewrite/Core/Rewriter.h"
 
 using namespace clang;
 
@@ -94,7 +95,7 @@ Expr *MyRecursiveASTVisitor::VisitBinaryOperator(BinaryOperator *E)
   if (E->isLogicalOp())
   {
     // Replace operator ("||" or "&&") with ","
-    Rewrite.ReplaceText(E->getOperatorLoc(), strlen(E->getOpcodeStr()), ",");
+    Rewrite.ReplaceText(E->getOperatorLoc(), E->getOpcodeStr().size(), ",");
 
     // Insert function call at start of first expression.
     // Note getLocStart() should work as well as getExprLoc()
