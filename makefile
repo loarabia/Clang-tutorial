@@ -1,9 +1,10 @@
 CXX := clang++
 LLVMCOMPONENTS := cppbackend
 RTTIFLAG := -fno-rtti
-#RTTIFLAG :=
-CXXFLAGS := $(shell llvm-config --cxxflags) $(RTTIFLAG)
-LLVMLDFLAGS := $(shell llvm-config --ldflags --libs $(LLVMCOMPONENTS))
+LLVMCONFIG := llvm-config
+
+CXXFLAGS := $(shell $(LLVMCONFIG) --cxxflags) $(RTTIFLAG)
+LLVMLDFLAGS := $(shell $(LLVMCONFIG) --ldflags --libs $(LLVMCOMPONENTS))
 
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
