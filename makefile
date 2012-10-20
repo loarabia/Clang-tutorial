@@ -17,11 +17,13 @@ SOURCES = tutorial1.cpp \
     CItutorial4.cpp \
     CItutorial6.cpp \
     CIBasicRecursiveASTVisitor.cpp \
-    CIrewriter.cpp
+    CIrewriter.cpp \
+		ToolingTutorial.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
 CLANGLIBS = \
+				-lclangTooling\
 				-lclangFrontendTool\
 				-lclangFrontend\
 				-lclangDriver\
