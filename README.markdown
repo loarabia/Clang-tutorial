@@ -9,6 +9,10 @@ This particular set of tutorials tracks the llvm / clang mainline and is updated
 
 See contents of the links above for a walkthrough of what these tutorials are doing.
 
+# Other Options #
+The Clang team has been hard at work making it easier to write tools using Clang. There are now [4 well documented options](http://clang.llvm.org/docs/Tooling.html)
+for developing tools using clang and llvm infrastructure.
+
 # Latest Stable LLVM / Clang (v3.1) #
 The master branch tracks recent commits to the clang and llvm svn. If you want
 the latest public release, then checkout the *3.1* tag.
