@@ -6,7 +6,7 @@
 #include "llvm/Support/Host.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 
-#include "clang/Frontend/DiagnosticOptions.h"
+#include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
 
 #include "clang/Basic/LangOptions.h"
@@ -29,12 +29,15 @@ int main()
     clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
         new clang::TextDiagnosticPrinter(
             llvm::outs(),
-            diagnosticOptions);
+            &diagnosticOptions,
+            true);
     llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
     //clang::DiagnosticIDs diagIDs;
     
     clang::DiagnosticsEngine *pDiagnosticsEngine =
-        new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
+        new clang::DiagnosticsEngine(pDiagIDs,
+            &diagnosticOptions,
+            pTextDiagnosticPrinter);
 
     clang::LangOptions languageOptions;
     clang::FileSystemOptions fileSystemOptions;
@@ -49,15 +52,21 @@ int main()
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            targetOptions);
+            &targetOptions);
 
-    clang::HeaderSearch headerSearch(fileManager, 
+    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
+
+    clang::HeaderSearch headerSearch(hso,
+                                     fileManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);
     clang::CompilerInstance compInst;
 
+    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts;
+
     clang::Preprocessor preprocessor(
+        pOpts,
         *pDiagnosticsEngine,
         languageOptions,
         pTargetInfo,

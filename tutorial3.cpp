@@ -5,7 +5,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Host.h"
 
-#include "clang/Frontend/DiagnosticOptions.h"
+#include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
 
 #include "clang/Basic/LangOptions.h"
@@ -15,14 +15,12 @@
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Basic/FileManager.h"
 
-#include "clang/Frontend/HeaderSearchOptions.h"
 #include "clang/Frontend/Utils.h"
 
 #include "clang/Basic/TargetOptions.h"
 #include "clang/Basic/TargetInfo.h"
 
 #include "clang/Lex/Preprocessor.h"
-#include "clang/Frontend/PreprocessorOptions.h"
 #include "clang/Frontend/FrontendOptions.h"
 #include "clang/Frontend/CompilerInstance.h"
 
@@ -33,10 +31,12 @@ int main()
     clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
         new clang::TextDiagnosticPrinter(
             llvm::outs(),
-            diagnosticOptions);
+            &diagnosticOptions);
     llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
     clang::DiagnosticsEngine *pDiagnosticsEngine =
-        new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
+        new clang::DiagnosticsEngine(pDiagIDs,
+            &diagnosticOptions,
+            pTextDiagnosticPrinter);
 
     clang::LangOptions languageOptions;
     clang::FileSystemOptions fileSystemOptions;
@@ -46,22 +46,26 @@ int main()
         *pDiagnosticsEngine,
         fileManager);
 
-    clang::HeaderSearchOptions headerSearchOptions;
 
     clang::TargetOptions targetOptions;
     targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            targetOptions);
+            &targetOptions);
 
-    clang::HeaderSearch headerSearch(fileManager, 
+    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso(new clang::HeaderSearchOptions());
+    clang::HeaderSearch headerSearch(hso,
+                                     fileManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);
     clang::CompilerInstance compInst;
 
+    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts;
+
     clang::Preprocessor preprocessor(
+        pOpts,
         *pDiagnosticsEngine,
         languageOptions,
         pTargetInfo,
@@ -80,7 +84,7 @@ int main()
     clang::InitializePreprocessor(
         preprocessor,
         preprocessorOptions,
-        headerSearchOptions,
+        *hso,
         frontendOptions);
 
     // Note: Changed the file from tutorial2.

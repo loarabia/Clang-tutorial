@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "llvm/Support/Host.h"
+#include "llvm/ADT/IntrusiveRefCntPtr.h"
 
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Basic/TargetOptions.h"
@@ -18,7 +19,6 @@
 #include "clang/Lex/Preprocessor.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Lex/HeaderSearch.h"
-#include "clang/Frontend/HeaderSearchOptions.h"
 #include "clang/Frontend/Utils.h"
 /******************************************************************************
  *
@@ -36,9 +36,9 @@ int main()
     CompilerInstance ci;
     ci.createDiagnostics(0,NULL);
 
-    TargetOptions to;
-    to.Triple = llvm::sys::getDefaultTargetTriple();
-    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), to);
+    llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
+    pto->Triple = llvm::sys::getDefaultTargetTriple();
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto.getPtr());
     ci.setTarget(pti);
 
     ci.createFileManager();
@@ -46,12 +46,12 @@ int main()
     ci.createPreprocessor();
     ci.getPreprocessorOpts().UsePredefines = true;
 
-    HeaderSearch headerSearch(ci.getFileManager(),
+    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso( new clang::HeaderSearchOptions());
+    HeaderSearch headerSearch(hso,
+                              ci.getFileManager(),
                               ci.getDiagnostics(),
                               ci.getLangOpts(),
                               pti);
-
-    HeaderSearchOptions headerSearchOptions;
 
     // <Warning!!> -- Platform Specific Code lives here
     // This depends on A) that you're running linux and
@@ -63,12 +63,12 @@ int main()
     // /usr/local/lib/clang/<version>/include/
     // See somewhere around Driver.cpp:77 to see Clang adding
     // its version of the headers to its include path.
-    headerSearchOptions.AddPath("/usr/include", 
+    hso->AddPath("/usr/include", 
                                 clang::frontend::Angled, 
                                 false, 
                                 false, 
                                 false);
-    headerSearchOptions.AddPath("/usr/lib/gcc/x86_64-linux-gnu/4.4.5/include",
+    hso->AddPath("/usr/lib/gcc/x86_64-linux-gnu/4.4.5/include",
                                 clang::frontend::Angled,
                                 false, 
                                 false,
@@ -77,7 +77,7 @@ int main()
 
     clang::InitializePreprocessor(ci.getPreprocessor(), 
                                   ci.getPreprocessorOpts(),
-                                  headerSearchOptions,
+                                  *hso,
                                   ci.getFrontendOpts());
 
 	const FileEntry *pFile = ci.getFileManager().getFile("testInclude.c");

@@ -6,7 +6,7 @@
 #include "llvm/Support/Host.h"
 #include "llvm/Support/Casting.h"
 
-#include "clang/Frontend/DiagnosticOptions.h"
+#include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
 
 #include "clang/Basic/LangOptions.h"
@@ -16,14 +16,12 @@
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Basic/FileManager.h"
 
-#include "clang/Frontend/HeaderSearchOptions.h"
 #include "clang/Frontend/Utils.h"
 
 #include "clang/Basic/TargetOptions.h"
 #include "clang/Basic/TargetInfo.h"
 
 #include "clang/Lex/Preprocessor.h"
-#include "clang/Frontend/PreprocessorOptions.h"
 #include "clang/Frontend/FrontendOptions.h"
 
 #include "clang/Basic/IdentifierTable.h"
@@ -79,10 +77,12 @@ int main()
     clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
         new clang::TextDiagnosticPrinter(
             llvm::outs(),
-            diagnosticOptions);
+            &diagnosticOptions);
     llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
     clang::DiagnosticsEngine *pDiagnosticsEngine =
-        new clang::DiagnosticsEngine(pDiagIDs, pTextDiagnosticPrinter);
+        new clang::DiagnosticsEngine(pDiagIDs,
+            &diagnosticOptions,
+            pTextDiagnosticPrinter);
 
     clang::LangOptions languageOptions;
     clang::FileSystemOptions fileSystemOptions;
@@ -92,7 +92,7 @@ int main()
         *pDiagnosticsEngine,
         fileManager);
 
-    clang::HeaderSearchOptions headerSearchOptions;
+    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> headerSearchOptions(new clang::HeaderSearchOptions());
     // <Warning!!> -- Platform Specific Code lives here
     // This depends on A) that you're running linux and
     // B) that you have the same GCC LIBs installed that
@@ -103,17 +103,17 @@ int main()
     // /usr/local/lib/clang/<version>/include/
     // See somewhere around Driver.cpp:77 to see Clang adding
     // its version of the headers to its include path.
-    headerSearchOptions.AddPath("/usr/include/linux",
+    headerSearchOptions->AddPath("/usr/include/linux",
             clang::frontend::Angled,
             false,
             false,
             false);
-    headerSearchOptions.AddPath("/usr/include/c++/4.4/tr1",
+    headerSearchOptions->AddPath("/usr/include/c++/4.4/tr1",
             clang::frontend::Angled,
             false,
             false,
             false);
-    headerSearchOptions.AddPath("/usr/include/c++/4.4",
+    headerSearchOptions->AddPath("/usr/include/c++/4.4",
             clang::frontend::Angled,
             false,
             false,
@@ -126,15 +126,18 @@ int main()
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            targetOptions);
+            &targetOptions);
 
-    clang::HeaderSearch headerSearch(fileManager, 
+    clang::HeaderSearch headerSearch(headerSearchOptions,
+                                     fileManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);
     clang::CompilerInstance compInst;
 
+    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts( new clang::PreprocessorOptions());
     clang::Preprocessor preprocessor(
+        pOpts,
         *pDiagnosticsEngine,
         languageOptions,
         pTargetInfo,
@@ -142,12 +145,11 @@ int main()
         headerSearch,
         compInst);
 
-    clang::PreprocessorOptions preprocessorOptions;
     clang::FrontendOptions frontendOptions;
     clang::InitializePreprocessor(
         preprocessor,
-        preprocessorOptions,
-        headerSearchOptions,
+        *pOpts,
+        *headerSearchOptions,
         frontendOptions);
         
     const clang::FileEntry *pFile = fileManager.getFile(

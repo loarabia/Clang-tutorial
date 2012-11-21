@@ -54,6 +54,7 @@
 
 #include "llvm/Support/Host.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/StringRef.h"
 
 #include "clang/Frontend/CompilerInstance.h"
@@ -258,10 +259,10 @@ MyASTConsumer::MyASTConsumer(const char *f)
   rv.ci = new CompilerInstance();
   rv.ci->createDiagnostics(0,NULL);
 
-  TargetOptions to;
-  to.Triple = llvm::sys::getDefaultTargetTriple();
-  TargetInfo *pti = TargetInfo::CreateTargetInfo(rv.ci->getDiagnostics(), to);
-  rv.ci->setTarget(pti);
+  llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
+  pto->Triple = llvm::sys::getDefaultTargetTriple();
+  llvm::IntrusiveRefCntPtr<TargetInfo> pti(TargetInfo::CreateTargetInfo(rv.ci->getDiagnostics(), pto.getPtr()));
+  rv.ci->setTarget(pti.getPtr());
 
   rv.ci->createFileManager();
   rv.ci->createSourceManager(rv.ci->getFileManager());
