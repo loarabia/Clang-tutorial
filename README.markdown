@@ -10,11 +10,13 @@ This particular set of tutorials tracks the llvm / clang mainline and is updated
 See contents of the links above for a walkthrough of what these tutorials are doing.
 
 # Other Options #
-The Clang team has been hard at work making it easier to write tools using Clang. There are now [4 well documented options](http://clang.llvm.org/docs/Tooling.html)
+The Clang team has been hard at work making it easier to write tools using Clang. There are [4 options](http://clang.llvm.org/docs/Tooling.html)
 for developing tools using clang and llvm infrastructure.
 
 # Latest Stable LLVM / Clang (v3.1) #
-The master branch tracks recent commits to the clang and llvm svn. If you want
+The master branch tracks recent commits to the clang and llvm svn. The tutorial assumes
+you have grabbed a copy of both llvm and clang by following [these instructions](http://clang.llvm.org/get_started.html)
+and that have installed the the resulting binaries by running `make install`. If you want
 the latest public release, then checkout the *3.1* tag.
 
     git clone git@github.com:loarabia/Clang-tutorial.git
