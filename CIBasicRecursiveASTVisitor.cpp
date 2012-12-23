@@ -71,7 +71,7 @@ int main()
 
   llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
   pto->Triple = llvm::sys::getDefaultTargetTriple();
-  llvm::IntrusiveRefCntPtr<TargetInfo> pti(TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto.getPtr()));
+  llvm::IntrusiveRefCntPtr<TargetInfo> pti(TargetInfo::CreateTargetInfo(ci.getDiagnostics(), *pto));
   ci.setTarget(pti.getPtr());
 
   ci.createFileManager();

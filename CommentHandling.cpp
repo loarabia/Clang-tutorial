@@ -104,8 +104,8 @@ class MyFactory : public clang::ASTFrontendAction
 int main(int argc, const char **argv)
 {
   CommonOptionsParser OptionsParser(argc, argv);
-  ClangTool Tool(OptionsParser.getCompilations(),
-                 OptionsParser.getSourcePathList());
+  ClangTool Tool(OptionsParser.GetCompilations(),
+                 OptionsParser.GetSourcePathList());
   FrontendActionFactory *factory = newFrontendActionFactory<tooling::MyFactory>();
   Tool.run(factory);
   return 0;

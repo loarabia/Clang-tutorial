@@ -261,7 +261,7 @@ MyASTConsumer::MyASTConsumer(const char *f)
 
   llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
   pto->Triple = llvm::sys::getDefaultTargetTriple();
-  llvm::IntrusiveRefCntPtr<TargetInfo> pti(TargetInfo::CreateTargetInfo(rv.ci->getDiagnostics(), pto.getPtr()));
+  llvm::IntrusiveRefCntPtr<TargetInfo> pti(TargetInfo::CreateTargetInfo(rv.ci->getDiagnostics(), *pto));
   rv.ci->setTarget(pti.getPtr());
 
   rv.ci->createFileManager();

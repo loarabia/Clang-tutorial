@@ -68,8 +68,8 @@ class MyFactory
 int main(int argc, const char **argv)
 {
   CommonOptionsParser OptionsParser(argc, argv);
-  ClangTool Tool(OptionsParser.getCompilations(),
-                 OptionsParser.getSourcePathList());
+  ClangTool Tool(OptionsParser.GetCompilations(),
+                 OptionsParser.GetSourcePathList());
   tooling::MyFactory Factory;
   Tool.run(newFrontendActionFactory(&Factory));
   return 0;

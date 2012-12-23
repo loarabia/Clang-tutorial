@@ -1,6 +1,7 @@
 // This code is licensed under the New BSD license.
 // See LICENSE.txt for more details.
 #include <iostream>
+#include <memory>
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Host.h"
@@ -33,7 +34,7 @@ int main()
             true);
     llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
     //clang::DiagnosticIDs diagIDs;
-    
+
     clang::DiagnosticsEngine *pDiagnosticsEngine =
         new clang::DiagnosticsEngine(pDiagIDs,
             &diagnosticOptions,
@@ -52,7 +53,7 @@ int main()
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
 

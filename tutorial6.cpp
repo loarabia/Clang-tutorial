@@ -126,7 +126,7 @@ int main()
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     clang::HeaderSearch headerSearch(headerSearchOptions,
                                      fileManager, 
@@ -151,7 +151,7 @@ int main()
         *pOpts,
         *headerSearchOptions,
         frontendOptions);
-        
+
     const clang::FileEntry *pFile = fileManager.getFile(
         "input04.c");
     sourceManager.createMainFileID(pFile);
