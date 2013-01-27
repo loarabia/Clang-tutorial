@@ -60,6 +60,8 @@
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/StringRef.h"
 
+#include "clang/Basic/DiagnosticOptions.h"
+#include "clang/Frontend/TextDiagnosticPrinter.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Basic/TargetOptions.h"
 #include "clang/Basic/TargetInfo.h"
@@ -292,7 +294,14 @@ int main(int argc, char **argv)
   }
 
   CompilerInstance compiler;
-  compiler.createDiagnostics(argc, argv);
+  DiagnosticOptions diagnosticOptions;
+  TextDiagnosticPrinter *pTextDiagnosticPrinter =
+      new TextDiagnosticPrinter(
+          llvm::outs(),
+          &diagnosticOptions,
+          true);
+  compiler.createDiagnostics(pTextDiagnosticPrinter);
+  //compiler.createDiagnostics(argc, argv);
 
   // Create an invocation that passes any flags to preprocessor
   CompilerInvocation *Invocation = new CompilerInvocation;

@@ -11,6 +11,8 @@
 #include "llvm/Support/Host.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 
+#include "clang/Basic/DiagnosticOptions.h"
+#include "clang/Frontend/TextDiagnosticPrinter.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Basic/TargetOptions.h"
 #include "clang/Basic/TargetInfo.h"
@@ -22,6 +24,7 @@
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Parse/Parser.h"
+#include "clang/Parse/ParseAST.h"
 
 /******************************************************************************
  *
@@ -36,9 +39,17 @@ int main()
     using clang::ASTContext;
     using clang::ASTConsumer;
     using clang::Parser;
+    using clang::DiagnosticOptions;
+    using clang::TextDiagnosticPrinter;
 
     CompilerInstance ci;
-    ci.createDiagnostics(0,NULL);
+    DiagnosticOptions diagnosticOptions;
+    TextDiagnosticPrinter *pTextDiagnosticPrinter =
+        new TextDiagnosticPrinter(
+            llvm::outs(),
+            &diagnosticOptions,
+            true);
+    ci.createDiagnostics(pTextDiagnosticPrinter);
 
     llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
     pto->Triple = llvm::sys::getDefaultTargetTriple();
@@ -55,14 +66,9 @@ int main()
     ci.createASTContext();
     ci.createSema(clang::TU_Complete, NULL);
 
-	const FileEntry *pFile = ci.getFileManager().getFile("test.c");
+	  const FileEntry *pFile = ci.getFileManager().getFile("test.c");
     ci.getSourceManager().createMainFileID(pFile);
-    ci.getPreprocessor().EnterMainSourceFile();
-    ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
-                                             &ci.getPreprocessor());
-    Parser parser(ci.getPreprocessor(), ci.getSema(), false /*skipFunctionBodies*/);
-    parser.ParseTranslationUnit();
-    ci.getDiagnosticClient().EndSourceFile();
+    clang::ParseAST(ci.getSema());
     ci.getASTContext().Idents.PrintStats();
 
     return 0;

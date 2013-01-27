@@ -11,6 +11,8 @@
 #include "llvm/Support/Host.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 
+#include "clang/Basic/DiagnosticOptions.h"
+#include "clang/Frontend/TextDiagnosticPrinter.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Basic/TargetOptions.h"
 #include "clang/Basic/TargetInfo.h"
@@ -29,9 +31,17 @@ int main()
     using clang::TargetInfo;
     using clang::FileEntry;
     using clang::Token;
+    using clang::DiagnosticOptions;
+    using clang::TextDiagnosticPrinter;
 
     CompilerInstance ci;
-    ci.createDiagnostics(0,NULL);
+    DiagnosticOptions diagnosticOptions;
+    TextDiagnosticPrinter *pTextDiagnosticPrinter =
+        new TextDiagnosticPrinter(
+            llvm::outs(),
+            &diagnosticOptions,
+            true);
+    ci.createDiagnostics(pTextDiagnosticPrinter);
 
     llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
     pto->Triple = llvm::sys::getDefaultTargetTriple();
