@@ -76,12 +76,10 @@ int main()
     hso->AddPath("/usr/include", 
                                 clang::frontend::Angled, 
                                 false, 
-                                false, 
                                 false);
     hso->AddPath("/usr/lib/gcc/x86_64-linux-gnu/4.4.5/include",
                                 clang::frontend::Angled,
                                 false, 
-                                false,
                                 false);
     // </Warning!!> -- End of Platform Specific Code
 

@@ -338,36 +338,29 @@ int main(int argc, char **argv)
   headerSearchOptions.AddPath("/usr/include/c++/4.6",
           clang::frontend::Angled,
           false,
-          false,
           false);
   headerSearchOptions.AddPath("/usr/include/c++/4.6/i686-linux-gnu",
           clang::frontend::Angled,
-          false,
           false,
           false);
   headerSearchOptions.AddPath("/usr/include/c++/4.6/backward",
           clang::frontend::Angled,
           false,
-          false,
           false);
   headerSearchOptions.AddPath("/usr/local/include",
           clang::frontend::Angled,
-          false,
           false,
           false);
   headerSearchOptions.AddPath("/usr/local/lib/clang/3.3/include",
           clang::frontend::Angled,
           false,
-          false,
           false);
   headerSearchOptions.AddPath("/usr/include/i386-linux-gnu",
           clang::frontend::Angled,
           false,
-          false,
           false);
   headerSearchOptions.AddPath("/usr/include",
           clang::frontend::Angled,
-          false,
           false,
           false);
   // </Warning!!> -- End of Platform Specific Code
