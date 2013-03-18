@@ -9,6 +9,11 @@ This particular set of tutorials tracks the llvm / clang mainline and is updated
 
 See contents of the links above for a walkthrough of what these tutorials are doing.
 
+# Last Update #
+This was last built on 3/17/2013 against
+URL: http://llvm.org/svn/llvm-project/llvm/trunk
+Revision: 177234
+
 # Other Options #
 The Clang team has been hard at work making it easier to write tools using Clang. There are [4 options](http://clang.llvm.org/docs/Tooling.html)
 for developing tools using clang and llvm infrastructure.
@@ -26,6 +31,11 @@ the latest public release, then checkout the *3.2* branch.
 The tutorials prefixed with CI are the same as the original tutorials but use the CompilerInstance object and
 its helper methods to perform the same tasks as the original tutorials. For the most part, this makes the code
 much more compact.
+
+# Tooling tutorials #
+These tutorials (and the clang tooling infrastrucutre) depend on having a file called `compile_commands.json` which
+defines the commands used to compile the input file. You will need to modify this file's `directory` field to point
+to the absolute path of the Clang-tutorial on your storage.
 
 # Windows Build #
 Note on the Windows build: Currently the paths are hardcoded. Please see the SharedBuild.targets file
