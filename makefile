@@ -43,7 +43,7 @@ CLANGLIBS = \
 				-lclangAST\
 				-lclangLex\
 				-lclangBasic\
-				$(shell llvm-config --libs)
+				$(shell $(LLVMCONFIG) --libs)
 
 all: $(OBJECTS) $(EXES)
 
