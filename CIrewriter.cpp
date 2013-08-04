@@ -59,6 +59,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/FileSystem.h"
 
 #include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
@@ -402,7 +403,7 @@ int main(int argc, char **argv)
 
   llvm::errs() << "Output to: " << outName << "\n";
   std::string OutErrorInfo;
-  llvm::raw_fd_ostream outFile(outName.c_str(), OutErrorInfo, 0);
+  llvm::raw_fd_ostream outFile(outName.c_str(), OutErrorInfo, llvm::sys::fs::F_None);
 
   if (OutErrorInfo.empty())
   {
