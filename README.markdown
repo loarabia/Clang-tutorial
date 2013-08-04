@@ -21,7 +21,7 @@ for developing tools using clang and llvm infrastructure.
 # Latest Stable LLVM / Clang (v3.3) #
 The master branch tracks recent commits to the clang and llvm svn. The tutorial assumes
 you have grabbed a copy of both llvm and clang by following [these instructions](http://clang.llvm.org/get_started.html)
-and that have installed the the resulting binaries by running `make install`. If you want
+and that have modified the makefile of this project to point to the build's resulting llvm-config. If you want
 the latest public release, then checkout the *3.3* branch.
 
     git clone git@github.com:loarabia/Clang-tutorial.git
