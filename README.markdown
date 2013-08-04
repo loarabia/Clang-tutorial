@@ -18,14 +18,14 @@ Revision:183076
 The Clang team has been hard at work making it easier to write tools using Clang. There are [4 options](http://clang.llvm.org/docs/Tooling.html)
 for developing tools using clang and llvm infrastructure.
 
-# Latest Stable LLVM / Clang (v3.2) #
+# Latest Stable LLVM / Clang (v3.3) #
 The master branch tracks recent commits to the clang and llvm svn. The tutorial assumes
 you have grabbed a copy of both llvm and clang by following [these instructions](http://clang.llvm.org/get_started.html)
 and that have installed the the resulting binaries by running `make install`. If you want
-the latest public release, then checkout the *3.2* branch.
+the latest public release, then checkout the *3.3* branch.
 
     git clone git@github.com:loarabia/Clang-tutorial.git
-    git checkout 3.2
+    git checkout 3.3
 
 # CI tutorials #
 The tutorials prefixed with CI are the same as the original tutorials but use the CompilerInstance object and
