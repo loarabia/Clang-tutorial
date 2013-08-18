@@ -28,14 +28,7 @@ int main()
     using clang::TextDiagnosticPrinter;
 
     CompilerInstance ci;
-    DiagnosticOptions diagnosticOptions;
-    TextDiagnosticPrinter *pTextDiagnosticPrinter =
-        new TextDiagnosticPrinter(
-            llvm::outs(),
-            &diagnosticOptions,
-            true);
-
-    ci.createDiagnostics(pTextDiagnosticPrinter);
+    ci.createDiagnostics();
 
     llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
     pto->Triple = llvm::sys::getDefaultTargetTriple();

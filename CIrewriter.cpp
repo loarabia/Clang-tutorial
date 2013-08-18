@@ -296,12 +296,7 @@ int main(int argc, char **argv)
 
   CompilerInstance compiler;
   DiagnosticOptions diagnosticOptions;
-  TextDiagnosticPrinter *pTextDiagnosticPrinter =
-      new TextDiagnosticPrinter(
-          llvm::outs(),
-          &diagnosticOptions,
-          true);
-  compiler.createDiagnostics(pTextDiagnosticPrinter);
+  compiler.createDiagnostics();
   //compiler.createDiagnostics(argc, argv);
 
   // Create an invocation that passes any flags to preprocessor
