@@ -18,8 +18,8 @@ SOURCES = tutorial1.cpp \
     CItutorial6.cpp \
     CIBasicRecursiveASTVisitor.cpp \
     CIrewriter.cpp \
-		ToolingTutorial.cpp \
-		CommentHandling.cpp
+    ToolingTutorial.cpp \
+    CommentHandling.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
@@ -43,7 +43,8 @@ CLANGLIBS = \
 				-lclangAST\
 				-lclangLex\
 				-lclangBasic\
-				$(shell $(LLVMCONFIG) --libs)
+				$(shell $(LLVMCONFIG) --libs)\
+                -lcurses
 
 all: $(OBJECTS) $(EXES)
 
