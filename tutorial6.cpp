@@ -126,7 +126,7 @@ int main()
             &targetOptions);
 
     clang::HeaderSearch headerSearch(headerSearchOptions,
-                                     fileManager, 
+                                     sourceManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);

@@ -10,9 +10,9 @@ This particular set of tutorials tracks the llvm / clang mainline and is updated
 See contents of the links above for a walkthrough of what these tutorials are doing.
 
 # Last Update #
-This was last built on 10/12/2013 against  
+This was last built on 11/24/2013 against  
 URL: http://llvm.org/svn/llvm-project/llvm/trunk  
-Revision:192330
+Revision:195570
 
 # Other Options #
 The Clang team has been hard at work making it easier to write tools using Clang. There are [4 options](http://clang.llvm.org/docs/Tooling.html)

@@ -53,7 +53,7 @@ int main()
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso( new clang::HeaderSearchOptions());
     HeaderSearch headerSearch(hso,
-                              ci.getFileManager(),
+                              ci.getSourceManager(),
                               ci.getDiagnostics(),
                               ci.getLangOpts(),
                               pti);
