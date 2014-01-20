@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 
+#include "llvm/Support/CommandLine.h"
+
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/Parse/Parser.h"
@@ -10,6 +12,8 @@
 
 using namespace clang::driver;
 using namespace clang::tooling;
+
+static llvm::cl::OptionCategory MyToolCategory("");
 
 /******************************************************************************
  *
@@ -67,7 +71,7 @@ class MyFactory
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-  CommonOptionsParser OptionsParser(argc, argv);
+  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
   tooling::MyFactory Factory;

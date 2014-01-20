@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include "llvm/Support/CommandLine.h"
+
 #include "clang/Basic/SourceLocation.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/ASTContext.h"
@@ -12,6 +14,8 @@
 using namespace clang::driver;
 using namespace clang::tooling;
 using clang::FileID;
+
+static llvm::cl::OptionCategory MyToolCategory("");
 
 /******************************************************************************
  *
@@ -103,7 +107,7 @@ class MyFactory : public clang::ASTFrontendAction
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-  CommonOptionsParser OptionsParser(argc, argv);
+  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
   FrontendActionFactory *factory = newFrontendActionFactory<tooling::MyFactory>();
