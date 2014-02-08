@@ -15,7 +15,6 @@ using namespace clang::driver;
 using namespace clang::tooling;
 using clang::FileID;
 
-static llvm::cl::OptionCategory MyToolCategory("");
 
 /******************************************************************************
  *
@@ -107,7 +106,7 @@ class MyFactory : public clang::ASTFrontendAction
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
+  CommonOptionsParser OptionsParser(argc, argv);
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
   FrontendActionFactory *factory = newFrontendActionFactory<tooling::MyFactory>();
