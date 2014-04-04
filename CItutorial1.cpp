@@ -37,6 +37,6 @@ int main()
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
-    ci.createPreprocessor();
+    ci.createPreprocessor(clang::TU_Complete);
     return 0;
 }

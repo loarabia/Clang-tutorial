@@ -44,6 +44,7 @@ CLANGLIBS = \
 				-lclangLex\
 				-lclangBasic\
 				$(shell $(LLVMCONFIG) --libs)\
+				$(shell $(LLVMCONFIG) --system-libs)\
                 -lcurses
 
 all: $(OBJECTS) $(EXES)

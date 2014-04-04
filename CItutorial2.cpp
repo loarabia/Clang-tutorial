@@ -45,7 +45,7 @@ int main()
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
-    ci.createPreprocessor();
+    ci.createPreprocessor(clang::TU_Complete);
 
 	const FileEntry *pFile = ci.getFileManager().getFile("test.c");
     ci.getSourceManager().createMainFileID(pFile);

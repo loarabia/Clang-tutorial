@@ -84,7 +84,7 @@ int main()
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
-    ci.createPreprocessor();
+    ci.createPreprocessor(clang::TU_Complete);
     ci.getPreprocessorOpts().UsePredefines = false;
     MyASTConsumer *astConsumer = new MyASTConsumer();
     ci.setASTConsumer(astConsumer);

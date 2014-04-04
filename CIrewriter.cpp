@@ -211,7 +211,7 @@ bool MyRecursiveASTVisitor::VisitFunctionDecl(FunctionDecl *f)
 
     // Make a stab at determining return type
     // Getting actual return type is trickier
-    QualType q = f->getResultType();
+    QualType q = f->getReturnType();
     const Type *typ = q.getTypePtr();
 
     std::string ret;
@@ -373,7 +373,7 @@ int main(int argc, char **argv)
                               clang::IK_CXX,
                               clang::LangStandard::lang_cxx0x);
 
-  compiler.createPreprocessor();
+  compiler.createPreprocessor(clang::TU_Complete);
   compiler.getPreprocessorOpts().UsePredefines = false;
 
   compiler.createASTContext();
