@@ -1,4 +1,6 @@
-
+#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
+#define CLANG_3_5
+#endif 
 #include <iostream>
 #include <vector>
 
@@ -13,8 +15,9 @@
 using namespace clang::driver;
 using namespace clang::tooling;
 
+#ifdef CLANG_3_5
 static llvm::cl::OptionCategory MyToolCategory("");
-
+#endif
 /******************************************************************************
  *
  *****************************************************************************/
@@ -71,7 +74,11 @@ class MyFactory
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
+#ifdef CLANG_3_5
   CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
+#else
+  CommonOptionsParser OptionsParser(argc, argv); 
+#endif 
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
   tooling::MyFactory Factory;

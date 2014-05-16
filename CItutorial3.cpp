@@ -6,6 +6,10 @@
  * CompilerInstance object which has as one of its purpose to create commonly
  * used Clang types.
  *****************************************************************************/
+#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
+#define CLANG_3_5
+#endif 
+
 #include <iostream>
 
 #include "llvm/Support/Host.h"
@@ -48,7 +52,11 @@ int main()
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
+#ifdef CLANG_3_5
     ci.createPreprocessor(clang::TU_Complete);
+#else
+    ci.createPreprocessor(); 
+#endif
     ci.getPreprocessorOpts().UsePredefines = true;
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso( new clang::HeaderSearchOptions());

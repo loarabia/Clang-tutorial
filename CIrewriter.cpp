@@ -49,6 +49,9 @@
  * Note: This tutorial uses the CompilerInstance object which has as one of
  * its purposes to create commonly used Clang types.
  *****************************************************************************/
+#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
+#define CLANG_3_5
+#endif 
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -211,7 +214,11 @@ bool MyRecursiveASTVisitor::VisitFunctionDecl(FunctionDecl *f)
 
     // Make a stab at determining return type
     // Getting actual return type is trickier
+#ifdef CLANG_3_5
     QualType q = f->getReturnType();
+#else
+    QualType q = f->getResultType();
+#endif
     const Type *typ = q.getTypePtr();
 
     std::string ret;
@@ -373,7 +380,11 @@ int main(int argc, char **argv)
                               clang::IK_CXX,
                               clang::LangStandard::lang_cxx0x);
 
+#ifdef CLANG_3_5
   compiler.createPreprocessor(clang::TU_Complete);
+#else
+  compiler.createPreprocessor(); 
+#endif
   compiler.getPreprocessorOpts().UsePredefines = false;
 
   compiler.createASTContext();
