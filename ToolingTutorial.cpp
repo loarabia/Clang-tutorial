@@ -13,8 +13,6 @@
 using namespace clang::driver;
 using namespace clang::tooling;
 
-static llvm::cl::OptionCategory MyToolCategory("");
-
 /******************************************************************************
  *
  *****************************************************************************/
@@ -71,9 +69,9 @@ class MyFactory
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
-  ClangTool Tool(OptionsParser.getCompilations(),
-                 OptionsParser.getSourcePathList());
+  CommonOptionsParser OptionsParser(argc, argv);
+  ClangTool Tool(OptionsParser.GetCompilations(),
+                 OptionsParser.GetSourcePathList());
   tooling::MyFactory Factory;
   Tool.run(newFrontendActionFactory(&Factory));
   return 0;

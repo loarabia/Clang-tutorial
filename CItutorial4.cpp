@@ -29,7 +29,7 @@
 /******************************************************************************
  *
  *****************************************************************************/
-int main()
+int main(int argc, char* argv[])
 {
     using clang::CompilerInstance;
     using clang::TargetOptions;
@@ -44,16 +44,16 @@ int main()
 
     CompilerInstance ci;
     DiagnosticOptions diagnosticOptions;
-    ci.createDiagnostics();
+    ci.createDiagnostics(argc, argv);
 
     llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
     pto->Triple = llvm::sys::getDefaultTargetTriple();
-    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto.getPtr());
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), *pto.getPtr());
     ci.setTarget(pti);
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
-    ci.createPreprocessor(clang::TU_Complete);
+    ci.createPreprocessor();
     ci.getPreprocessorOpts().UsePredefines = false;
     ASTConsumer *astConsumer = new ASTConsumer();
     ci.setASTConsumer(astConsumer);

@@ -69,15 +69,15 @@ int main()
     headerSearchOptions->AddPath("/usr/include/linux",
             clang::frontend::Angled,
             false,
-            false);
+            false, false);
     headerSearchOptions->AddPath("/usr/include/c++/4.4/tr1",
             clang::frontend::Angled,
             false,
-            false);
+            false, false);
     headerSearchOptions->AddPath("/usr/include/c++/4.4",
             clang::frontend::Angled,
             false,
-            false);
+            false, false);
     // </Warning!!> -- End of Platform Specific Code
 
     clang::TargetOptions targetOptions;
@@ -86,11 +86,11 @@ int main()
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
     clang::HeaderSearch headerSearch(hso,
-                                     sourceManager, 
+                                     fileManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);
