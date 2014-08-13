@@ -211,7 +211,7 @@ bool MyRecursiveASTVisitor::VisitFunctionDecl(FunctionDecl *f)
 
     // Make a stab at determining return type
     // Getting actual return type is trickier
-    QualType q = f->getReturnType();
+    QualType q = f->getResultType();
     const Type *typ = q.getTypePtr();
 
     std::string ret;
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
 
   CompilerInstance compiler;
   DiagnosticOptions diagnosticOptions;
-  compiler.createDiagnostics();
+  compiler.createDiagnostics(argc, argv);
   //compiler.createDiagnostics(argc, argv);
 
   // Create an invocation that passes any flags to preprocessor
@@ -310,7 +310,7 @@ int main(int argc, char **argv)
   pto->Triple = llvm::sys::getDefaultTargetTriple();
   llvm::IntrusiveRefCntPtr<TargetInfo>
      pti(TargetInfo::CreateTargetInfo(compiler.getDiagnostics(),
-                                      pto.getPtr()));
+                                      *pto.getPtr()));
   compiler.setTarget(pti.getPtr());
 
   compiler.createFileManager();
@@ -334,31 +334,31 @@ int main(int argc, char **argv)
   headerSearchOptions.AddPath("/usr/include/c++/4.6",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   headerSearchOptions.AddPath("/usr/include/c++/4.6/i686-linux-gnu",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   headerSearchOptions.AddPath("/usr/include/c++/4.6/backward",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   headerSearchOptions.AddPath("/usr/local/include",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   headerSearchOptions.AddPath("/usr/local/lib/clang/3.3/include",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   headerSearchOptions.AddPath("/usr/include/i386-linux-gnu",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   headerSearchOptions.AddPath("/usr/include",
           clang::frontend::Angled,
           false,
-          false);
+          false, false);
   // </Warning!!> -- End of Platform Specific Code
 
 
@@ -373,7 +373,7 @@ int main(int argc, char **argv)
                               clang::IK_CXX,
                               clang::LangStandard::lang_cxx0x);
 
-  compiler.createPreprocessor(clang::TU_Complete);
+  compiler.createPreprocessor();
   compiler.getPreprocessorOpts().UsePredefines = false;
 
   compiler.createASTContext();
@@ -398,7 +398,7 @@ int main(int argc, char **argv)
 
   llvm::errs() << "Output to: " << outName << "\n";
   std::string OutErrorInfo;
-  llvm::raw_fd_ostream outFile(outName.c_str(), OutErrorInfo, llvm::sys::fs::F_None);
+  llvm::raw_fd_ostream outFile(outName.c_str(), OutErrorInfo);
 
   if (OutErrorInfo.empty())
   {

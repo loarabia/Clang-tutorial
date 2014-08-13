@@ -25,7 +25,7 @@
 /******************************************************************************
  *
  *****************************************************************************/
-int main()
+int main(int argc, char* argv[])
 {
     using clang::CompilerInstance;
     using clang::TargetOptions;
@@ -39,21 +39,21 @@ int main()
 
     CompilerInstance ci;
     DiagnosticOptions diagnosticOptions;
-    ci.createDiagnostics();
+    ci.createDiagnostics(argc, argv);
 
     llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
     pto->Triple = llvm::sys::getDefaultTargetTriple();
-    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto.getPtr());
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), *pto.getPtr());
     ci.setTarget(pti);
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
-    ci.createPreprocessor(clang::TU_Complete);
+    ci.createPreprocessor();
     ci.getPreprocessorOpts().UsePredefines = true;
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso( new clang::HeaderSearchOptions());
     HeaderSearch headerSearch(hso,
-                              ci.getSourceManager(),
+                              ci.getFileManager(),
                               ci.getDiagnostics(),
                               ci.getLangOpts(),
                               pti);
@@ -71,11 +71,11 @@ int main()
     hso->AddPath("/usr/include", 
                                 clang::frontend::Angled, 
                                 false, 
-                                false);
+                                false, false);
     hso->AddPath("/usr/lib/gcc/x86_64-linux-gnu/4.4.5/include",
                                 clang::frontend::Angled,
                                 false, 
-                                false);
+                                false, false);
     // </Warning!!> -- End of Platform Specific Code
 
     clang::InitializePreprocessor(ci.getPreprocessor(), 

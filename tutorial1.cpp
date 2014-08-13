@@ -52,12 +52,12 @@ int main()
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
 
     clang::HeaderSearch headerSearch(hso,
-                                     sourceManager, 
+                                     fileManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);
