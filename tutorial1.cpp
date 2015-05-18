@@ -1,6 +1,7 @@
 // This code is licensed under the New BSD license.
 // See LICENSE.txt for more details.
 #include <iostream>
+#include <memory>
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Host.h"
@@ -46,13 +47,15 @@ int main()
         *pDiagnosticsEngine,
         fileManager);
 
-    clang::TargetOptions targetOptions;
-    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+
+    std::shared_ptr<clang::TargetOptions> targetOptions = std::make_shared<clang::TargetOptions>();
+    //    clang::TargetOptions targetOptions;
+    targetOptions->Triple = llvm::sys::getDefaultTargetTriple();
 
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
 
@@ -69,10 +72,10 @@ int main()
         pOpts,
         *pDiagnosticsEngine,
         languageOptions,
-        pTargetInfo,
-        sourceManager,
+	sourceManager,
         headerSearch,
-        compInst);
+	compInst
+        );
 
     return 0;
 }

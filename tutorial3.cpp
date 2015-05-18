@@ -46,13 +46,14 @@ int main()
         *pDiagnosticsEngine,
         fileManager);
 
+    const std::shared_ptr<clang::TargetOptions> targetOptions = std::make_shared<clang::TargetOptions>();
+    //clang::TargetOptions targetOptions;
+    targetOptions->Triple = llvm::sys::getDefaultTargetTriple();
 
-    clang::TargetOptions targetOptions;
-    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso(new clang::HeaderSearchOptions());
     clang::HeaderSearch headerSearch(hso,
@@ -68,11 +69,11 @@ int main()
         pOpts,
         *pDiagnosticsEngine,
         languageOptions,
-        pTargetInfo,
         sourceManager,
         headerSearch,
         compInst);
 
+    preprocessor.Initialize(*pTargetInfo);
 
     clang::PreprocessorOptions preprocessorOptions;
     // disable predefined Macros so that you only see the tokens from your 
@@ -84,12 +85,11 @@ int main()
     clang::InitializePreprocessor(
         preprocessor,
         preprocessorOptions,
-        *hso,
         frontendOptions);
 
     // Note: Changed the file from tutorial2.
     const clang::FileEntry *pFile = fileManager.getFile("testInclude.c");
-    sourceManager.createMainFileID(pFile);
+    sourceManager.setMainFileID( sourceManager.createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
     preprocessor.EnterMainSourceFile();
     pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
 

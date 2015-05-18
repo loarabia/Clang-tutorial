@@ -1,6 +1,7 @@
 // This code is licensed under the New BSD license.
 // See LICENSE.txt for more details.
 #include <iostream>
+#include <memory>
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Host.h"
@@ -44,13 +45,14 @@ int main()
         *pDiagnosticsEngine,
         fileManager);
 
-    clang::TargetOptions targetOptions;
-    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+    std::shared_ptr<clang::TargetOptions> targetOptions = std::make_shared<clang::TargetOptions>();
+    //clang::TargetOptions targetOptions;
+    targetOptions->Triple = llvm::sys::getDefaultTargetTriple();
 
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
     clang::HeaderSearch headerSearch(hso,
@@ -66,14 +68,14 @@ int main()
         pOpts,
         *pDiagnosticsEngine,
         languageOptions,
-        pTargetInfo,
-        sourceManager,
+	sourceManager,
         headerSearch,
-        compInst);
+	compInst
+        );
 
-
+    //const clang::FileEntry file = sourceManager.getMainFileID();
     const clang::FileEntry *pFile = fileManager.getFile("test.c");
-    sourceManager.createMainFileID(pFile);
+    sourceManager.setMainFileID( sourceManager.createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
     preprocessor.EnterMainSourceFile();
     pTextDiagnosticPrinter->BeginSourceFile(languageOptions, &preprocessor);
 
