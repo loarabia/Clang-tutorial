@@ -47,15 +47,14 @@ int main()
         fileManager);
 
     const std::shared_ptr<clang::TargetOptions> targetOptions = std::make_shared<clang::TargetOptions>();
-    //clang::TargetOptions targetOptions;
     targetOptions->Triple = llvm::sys::getDefaultTargetTriple();
 
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
             targetOptions);
-
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso(new clang::HeaderSearchOptions());
+
     clang::HeaderSearch headerSearch(hso,
                                      sourceManager, 
                                      *pDiagnosticsEngine,
@@ -75,7 +74,6 @@ int main()
 
     preprocessor.Initialize(*pTargetInfo);
 
-    clang::PreprocessorOptions preprocessorOptions;
     // disable predefined Macros so that you only see the tokens from your 
     // source file. Note, this has some nasty side-effects like also undefning
     // your archictecture and things like that.
@@ -84,8 +82,12 @@ int main()
     clang::FrontendOptions frontendOptions;
     clang::InitializePreprocessor(
         preprocessor,
-        preprocessorOptions,
+        *pOpts,
         frontendOptions);
+    clang::ApplyHeaderSearchOptions( preprocessor.getHeaderSearchInfo(),
+	compInst.getHeaderSearchOpts(),
+	preprocessor.getLangOpts(),
+	preprocessor.getTargetInfo().getTriple());
 
     // Note: Changed the file from tutorial2.
     const clang::FileEntry *pFile = fileManager.getFile("testInclude.c");

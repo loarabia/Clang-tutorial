@@ -80,15 +80,15 @@ int main()
             false);
     // </Warning!!> -- End of Platform Specific Code
 
-    clang::TargetOptions targetOptions;
-    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+    const std::shared_ptr<clang::TargetOptions> targetOptions = std::make_shared<clang::TargetOptions>();
+    targetOptions->Triple = llvm::sys::getDefaultTargetTriple();
 
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
-    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso;
+    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso(new clang::HeaderSearchOptions());
     clang::HeaderSearch headerSearch(hso,
                                      sourceManager, 
                                      *pDiagnosticsEngine,
@@ -96,26 +96,26 @@ int main()
                                      pTargetInfo);
     clang::CompilerInstance compInst;
 
-    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts( new clang::PreprocessorOptions());
+    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts(new clang::PreprocessorOptions);
     clang::Preprocessor preprocessor(
         pOpts,
         *pDiagnosticsEngine,
         languageOptions,
-        pTargetInfo,
         sourceManager,
         headerSearch,
         compInst);
+    preprocessor.Initialize(*pTargetInfo);
 
     clang::FrontendOptions frontendOptions;
     clang::InitializePreprocessor(
         preprocessor,
         *pOpts,
-        *headerSearchOptions,
         frontendOptions);
         
     const clang::FileEntry *pFile = fileManager.getFile(
         "test.c");
-    sourceManager.createMainFileID(pFile);
+    //sourceManager.setMainFileID( sourceManager.createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
+    //preprocessor.EnterMainSourceFile();
 
     const clang::TargetInfo &targetInfo = *pTargetInfo;
 
@@ -127,11 +127,10 @@ int main()
     clang::ASTContext astContext(
         languageOptions,
         sourceManager,
-        pTargetInfo,
         identifierTable,
         selectorTable,
-        builtinContext,
-        0 /* size_reserve*/);
+        builtinContext);
+    astContext.InitBuiltinTypes(*pTargetInfo);
     clang::ASTConsumer astConsumer;
 
     clang::Sema sema(

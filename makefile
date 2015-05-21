@@ -1,7 +1,7 @@
 CXX := clang++
 LLVMCOMPONENTS := cppbackend
 RTTIFLAG := -fno-rtti
-LLVMCONFIG := /Users/loarabia/Code/build_llvm/Debug+Asserts/bin/llvm-config
+LLVMCONFIG := /Users/lawrenceolson/Code/build_llvm/Debug+Asserts/bin/llvm-config
 
 CXXFLAGS := -I$(shell $(LLVMCONFIG) --src-root)/tools/clang/include -I$(shell $(LLVMCONFIG) --obj-root)/tools/clang/include $(shell $(LLVMCONFIG) --cxxflags) $(RTTIFLAG)
 LLVMLDFLAGS := $(shell $(LLVMCONFIG) --ldflags --libs $(LLVMCOMPONENTS))
@@ -9,17 +9,22 @@ LLVMLDFLAGS := $(shell $(LLVMCONFIG) --ldflags --libs $(LLVMCOMPONENTS))
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
     tutorial3.cpp \
-    tutorial4.cpp \
-    tutorial6.cpp \
-    CItutorial1.cpp \
-    CItutorial2.cpp \
-    CItutorial3.cpp \
-    CItutorial4.cpp \
-    CItutorial6.cpp \
-    CIBasicRecursiveASTVisitor.cpp \
-    CIrewriter.cpp \
-    ToolingTutorial.cpp \
-    CommentHandling.cpp
+    tutorial4.cpp 
+#SOURCES = tutorial1.cpp \
+#    tutorial2.cpp \
+#    tutorial3.cpp \
+#    tutorial4.cpp \
+#    tutorial6.cpp \
+#    CItutorial1.cpp \
+#    CItutorial2.cpp \
+#    CItutorial3.cpp \
+#    CItutorial4.cpp \
+#    CItutorial6.cpp \
+#    CIBasicRecursiveASTVisitor.cpp \
+#    CIrewriter.cpp \
+#    ToolingTutorial.cpp \
+#    CommentHandling.cpp \
+#    CLtutorial1.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)
@@ -38,7 +43,6 @@ CLANGLIBS = \
 				-lclangAnalysis\
 				-lclangARCMigrate\
 				-lclangRewriteFrontend\
-				-lclangRewriteCore\
 				-lclangEdit\
 				-lclangAST\
 				-lclangLex\
