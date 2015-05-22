@@ -6,10 +6,6 @@
  * CompilerInstance object which has as one of its purpose to create commonly
  * used Clang types.
  *****************************************************************************/
-#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
-#define CLANG_3_5
-#endif 
-
 #include <iostream>
 
 #include "llvm/Support/Host.h"
@@ -42,20 +38,17 @@ int main()
     DiagnosticOptions diagnosticOptions;
     ci.createDiagnostics();
 
-    llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
+    std::shared_ptr<clang::TargetOptions> pto = std::make_shared<clang::TargetOptions>();
     pto->Triple = llvm::sys::getDefaultTargetTriple();
-    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto.getPtr());
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto);
     ci.setTarget(pti);
 
     ci.createFileManager();
     ci.createSourceManager(ci.getFileManager());
-#ifdef CLANG_3_5
     ci.createPreprocessor(clang::TU_Complete);
-#else
-    ci.createPreprocessor(); 
-#endif  
-	const FileEntry *pFile = ci.getFileManager().getFile("test.c");
-    ci.getSourceManager().createMainFileID(pFile);
+
+    const FileEntry *pFile = ci.getFileManager().getFile("test.c");
+    ci.getSourceManager().setMainFileID( ci.getSourceManager().createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
     ci.getPreprocessor().EnterMainSourceFile();
     ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
                                              &ci.getPreprocessor());
