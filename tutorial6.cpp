@@ -117,13 +117,13 @@ int main()
             false);
     // </Warning!!> -- End of Platform Specific Code
 
-    clang::TargetOptions targetOptions;
-    targetOptions.Triple = llvm::sys::getDefaultTargetTriple();
+    const std::shared_ptr<clang::TargetOptions> targetOptions = std::make_shared<clang::TargetOptions>();
+    targetOptions->Triple = llvm::sys::getDefaultTargetTriple();
 
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+            targetOptions);
 
     clang::HeaderSearch headerSearch(headerSearchOptions,
                                      sourceManager, 
@@ -137,21 +137,25 @@ int main()
         pOpts,
         *pDiagnosticsEngine,
         languageOptions,
-        pTargetInfo,
         sourceManager,
         headerSearch,
         compInst);
+    preprocessor.Initialize(*pTargetInfo);
 
     clang::FrontendOptions frontendOptions;
     clang::InitializePreprocessor(
         preprocessor,
         *pOpts,
-        *headerSearchOptions,
         frontendOptions);
+    clang::ApplyHeaderSearchOptions( preprocessor.getHeaderSearchInfo(),
+	compInst.getHeaderSearchOpts(),
+	preprocessor.getLangOpts(),
+	preprocessor.getTargetInfo().getTriple());
+
         
     const clang::FileEntry *pFile = fileManager.getFile(
         "input04.c");
-    sourceManager.createMainFileID(pFile);
+    sourceManager.setMainFileID( sourceManager.createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
 
     const clang::TargetInfo &targetInfo = *pTargetInfo;
 
@@ -163,12 +167,12 @@ int main()
     clang::ASTContext astContext(
         languageOptions,
         sourceManager,
-        pTargetInfo,
         identifierTable,
         selectorTable,
-        builtinContext,
-        0 /* size_reserve*/);
-   MyASTConsumer astConsumer;
+        builtinContext);
+    astContext.InitBuiltinTypes(*pTargetInfo);
+
+    MyASTConsumer astConsumer;
 
     clang::Sema sema(
         preprocessor,

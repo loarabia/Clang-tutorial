@@ -62,8 +62,7 @@ int main()
                                      pTargetInfo);
     clang::CompilerInstance compInst;
 
-    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts;
-
+    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts(new clang::PreprocessorOptions);
     clang::Preprocessor preprocessor(
         pOpts,
         *pDiagnosticsEngine,

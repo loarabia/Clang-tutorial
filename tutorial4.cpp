@@ -88,15 +88,14 @@ int main()
             *pDiagnosticsEngine,
             targetOptions);
 
-    llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> hso(new clang::HeaderSearchOptions());
-    clang::HeaderSearch headerSearch(hso,
+    clang::HeaderSearch headerSearch(headerSearchOptions,
                                      sourceManager, 
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);
     clang::CompilerInstance compInst;
 
-    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts(new clang::PreprocessorOptions);
+    llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts(new clang::PreprocessorOptions());
     clang::Preprocessor preprocessor(
         pOpts,
         *pDiagnosticsEngine,
@@ -114,9 +113,8 @@ int main()
         
     const clang::FileEntry *pFile = fileManager.getFile(
         "test.c");
-    //sourceManager.setMainFileID( sourceManager.createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
-    //preprocessor.EnterMainSourceFile();
 
+    sourceManager.setMainFileID( sourceManager.createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
     const clang::TargetInfo &targetInfo = *pTargetInfo;
 
     clang::IdentifierTable identifierTable(languageOptions);

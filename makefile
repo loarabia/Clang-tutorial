@@ -9,7 +9,8 @@ LLVMLDFLAGS := $(shell $(LLVMCONFIG) --ldflags --libs $(LLVMCOMPONENTS))
 SOURCES = tutorial1.cpp \
     tutorial2.cpp \
     tutorial3.cpp \
-    tutorial4.cpp 
+    tutorial4.cpp \
+    tutorial6.cpp
 #SOURCES = tutorial1.cpp \
 #    tutorial2.cpp \
 #    tutorial3.cpp \
