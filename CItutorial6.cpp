@@ -86,7 +86,6 @@ int main()
     ci.createSourceManager(ci.getFileManager());
     ci.createPreprocessor(clang::TU_Complete);
     ci.getPreprocessorOpts().UsePredefines = false;
-    MyASTConsumer *astConsumer = new MyASTConsumer();
     ci.setASTConsumer(llvm::make_unique<MyASTConsumer>());
 
     ci.createASTContext();
@@ -95,7 +94,7 @@ int main()
     ci.getSourceManager().setMainFileID( ci.getSourceManager().createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
     ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
                                              &ci.getPreprocessor());
-    clang::ParseAST(ci.getPreprocessor(), astConsumer, ci.getASTContext());
+    clang::ParseAST(ci.getPreprocessor(), &ci.getASTConsumer(), ci.getASTContext());
     ci.getDiagnosticClient().EndSourceFile();
 
     return 0;

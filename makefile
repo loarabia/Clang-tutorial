@@ -15,7 +15,9 @@ SOURCES = tutorial1.cpp \
     CItutorial2.cpp \
     CItutorial3.cpp \
     CItutorial4.cpp \
-    CItutorial6.cpp
+    CItutorial6.cpp \
+    CIBasicRecursiveASTVisitor.cpp \
+    CIrewriter.cpp
 #SOURCES = tutorial1.cpp \
 #    tutorial2.cpp \
 #    tutorial3.cpp \
@@ -48,6 +50,7 @@ CLANGLIBS = \
 				-lclangStaticAnalyzerCore\
 				-lclangAnalysis\
 				-lclangARCMigrate\
+				-lclangRewrite\
 				-lclangRewriteFrontend\
 				-lclangEdit\
 				-lclangAST\

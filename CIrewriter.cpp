@@ -49,14 +49,11 @@
  * Note: This tutorial uses the CompilerInstance object which has as one of
  * its purposes to create commonly used Clang types.
  *****************************************************************************/
-#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
-#define CLANG_3_5
-#endif 
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <vector>
+#include <system_error>
 
 #include "llvm/Support/Host.h"
 #include "llvm/Support/raw_ostream.h"
@@ -214,11 +211,7 @@ bool MyRecursiveASTVisitor::VisitFunctionDecl(FunctionDecl *f)
 
     // Make a stab at determining return type
     // Getting actual return type is trickier
-#ifdef CLANG_3_5
     QualType q = f->getReturnType();
-#else
-    QualType q = f->getResultType();
-#endif
     const Type *typ = q.getTypePtr();
 
     std::string ret;
@@ -313,12 +306,10 @@ int main(int argc, char **argv)
   compiler.setInvocation(Invocation);
 
   // Set default target triple
-  llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
+    std::shared_ptr<clang::TargetOptions> pto = std::make_shared<clang::TargetOptions>();
   pto->Triple = llvm::sys::getDefaultTargetTriple();
-  llvm::IntrusiveRefCntPtr<TargetInfo>
-     pti(TargetInfo::CreateTargetInfo(compiler.getDiagnostics(),
-                                      pto.getPtr()));
-  compiler.setTarget(pti.getPtr());
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(compiler.getDiagnostics(), pto);
+  compiler.setTarget(pti);
 
   compiler.createFileManager();
   compiler.createSourceManager(compiler.getFileManager());
@@ -380,11 +371,7 @@ int main(int argc, char **argv)
                               clang::IK_CXX,
                               clang::LangStandard::lang_cxx0x);
 
-#ifdef CLANG_3_5
   compiler.createPreprocessor(clang::TU_Complete);
-#else
-  compiler.createPreprocessor(); 
-#endif
   compiler.getPreprocessorOpts().UsePredefines = false;
 
   compiler.createASTContext();
@@ -394,7 +381,7 @@ int main(int argc, char **argv)
   Rewrite.setSourceMgr(compiler.getSourceManager(), compiler.getLangOpts());
 
   const FileEntry *pFile = compiler.getFileManager().getFile(fileName);
-  compiler.getSourceManager().createMainFileID(pFile);
+    compiler.getSourceManager().setMainFileID( compiler.getSourceManager().createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
   compiler.getDiagnosticClient().BeginSourceFile(compiler.getLangOpts(),
                                                 &compiler.getPreprocessor());
 
@@ -408,10 +395,11 @@ int main(int argc, char **argv)
   outName.insert(ext, "_out");
 
   llvm::errs() << "Output to: " << outName << "\n";
-  std::string OutErrorInfo;
-  llvm::raw_fd_ostream outFile(outName.c_str(), OutErrorInfo, llvm::sys::fs::F_None);
+  std::error_code OutErrorInfo;
+  std::error_code ok;
+  llvm::raw_fd_ostream outFile(llvm::StringRef(outName), OutErrorInfo, llvm::sys::fs::F_None);
 
-  if (OutErrorInfo.empty())
+  if (OutErrorInfo == ok)
   {
     // Parse the AST
     ParseAST(compiler.getPreprocessor(), &astConsumer, compiler.getASTContext());
