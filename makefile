@@ -17,22 +17,9 @@ SOURCES = tutorial1.cpp \
     CItutorial4.cpp \
     CItutorial6.cpp \
     CIBasicRecursiveASTVisitor.cpp \
-    CIrewriter.cpp
-#SOURCES = tutorial1.cpp \
-#    tutorial2.cpp \
-#    tutorial3.cpp \
-#    tutorial4.cpp \
-#    tutorial6.cpp \
-#    CItutorial1.cpp \
-#    CItutorial2.cpp \
-#    CItutorial3.cpp \
-#    CItutorial4.cpp \
-#    CItutorial6.cpp \
-#    CIBasicRecursiveASTVisitor.cpp \
-#    CIrewriter.cpp \
-#    ToolingTutorial.cpp \
-#    CommentHandling.cpp \
-#    CLtutorial1.cpp
+    CIrewriter.cpp \
+    ToolingTutorial.cpp \
+    CommentHandling.cpp 
 
 OBJECTS = $(SOURCES:.cpp=.o)
 EXES = $(OBJECTS:.o=)

@@ -1,6 +1,6 @@
 [
   {
-    "directory" : "/Users/loarabia/Code/Clang-tutorial/",
+    "directory" : "/Users/lawrenceolson/Code/Clang-tutorial/",
     "command" : "clang -c -o input04.o input04.c"
     "file" : "input04.c"
   }

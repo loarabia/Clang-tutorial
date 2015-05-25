@@ -1,8 +1,6 @@
-#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
-#define CLANG_3_5
-#endif 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "llvm/Support/CommandLine.h"
 
@@ -18,9 +16,7 @@ using namespace clang::driver;
 using namespace clang::tooling;
 using clang::FileID;
 
-#ifdef CLANG_3_5
 static llvm::cl::OptionCategory MyToolCategory("");
-#endif
 
 /******************************************************************************
  *
@@ -97,10 +93,10 @@ class MyFactory : public clang::ASTFrontendAction
     MyCommentHandler ch;
 
   public:
-    clang::ASTConsumer *CreateASTConsumer(clang::CompilerInstance &ci, llvm::StringRef inFile) {
+    std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &ci, llvm::StringRef inFile) {
       ch.set_InFile(inFile);
       ci.getPreprocessor().addCommentHandler(&ch);
-      return new MyASTConsumer();
+      return llvm::make_unique<MyASTConsumer>();
     }
 
 };
@@ -112,14 +108,10 @@ class MyFactory : public clang::ASTFrontendAction
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-#ifdef CLANG_3_5
   CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
-#else
-  CommonOptionsParser OptionsParser(argc, argv); 
-#endif
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
-  FrontendActionFactory *factory = newFrontendActionFactory<tooling::MyFactory>();
-  Tool.run(factory);
+  std::unique_ptr<FrontendActionFactory> factory = newFrontendActionFactory<tooling::MyFactory>();
+  Tool.run(factory.get());
   return 0;
 }
