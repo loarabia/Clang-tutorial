@@ -10,9 +10,9 @@ This particular set of tutorials tracks the llvm / clang mainline and is updated
 See contents of the links above for a walkthrough of what these tutorials are doing.
 
 # Last Update #
-This was last built on 4/3/2014 against  
+This was last built on 5/25/2015 against  
 URL: http://llvm.org/svn/llvm-project/llvm/trunk  
-Revision:205387
+Revision:237487
 
 # Other Options #
 The Clang team has been hard at work making it easier to write tools using Clang. There are [4 options](http://clang.llvm.org/docs/Tooling.html)
@@ -36,6 +36,11 @@ much more compact.
 These tutorials (and the clang tooling infrastrucutre) depend on having a file called `compile_commands.json` which
 defines the commands used to compile the input file. You will need to modify this file's `directory` field to point
 to the absolute path of the Clang-tutorial on your storage.
+
+    Update compile_commands.json to the directory containing input
+
+    ./ToolingTutorial input04.c
+    ./CommentHandling input04.c
 
 # Windows Build #
 Note on the Windows build: Currently the paths are hardcoded. Please see the SharedBuild.targets file
