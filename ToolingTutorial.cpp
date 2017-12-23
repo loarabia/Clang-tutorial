@@ -1,4 +1,6 @@
-
+#if CLANG_VERSION_MAJOR == 3 && CLANG_VERSION_MINOR == 5
+#define CLANG_3_5
+#endif 
 #include <iostream>
 #include <vector>
 
@@ -13,7 +15,7 @@
 using namespace clang::driver;
 using namespace clang::tooling;
 
-
+static llvm::cl::OptionCategory MyToolCategory("");
 /******************************************************************************
  *
  *****************************************************************************/
@@ -57,8 +59,8 @@ public:
 class MyFactory
 {
   public:
-    clang::ASTConsumer *newASTConsumer() {
-      return new MyASTConsumer();
+    std::unique_ptr<MyASTConsumer> newASTConsumer() {
+      return llvm::make_unique<MyASTConsumer>();
       }
 
 };
@@ -70,10 +72,11 @@ class MyFactory
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-  CommonOptionsParser OptionsParser(argc, argv);
+  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
-  tooling::MyFactory Factory;
-  Tool.run(newFrontendActionFactory(&Factory));
+  tooling::MyFactory myFactory;
+  std::unique_ptr<FrontendActionFactory> factory = newFrontendActionFactory(&myFactory);
+  Tool.run(factory.get());
   return 0;
 }

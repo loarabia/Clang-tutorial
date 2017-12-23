@@ -10,7 +10,6 @@
 
 #include "llvm/Support/Host.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
-#include "llvm/ADT/OwningPtr.h"
 #include "llvm/Support/raw_ostream.h"
 
 #include "clang/Basic/DiagnosticOptions.h"
@@ -21,6 +20,7 @@
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Lex/Preprocessor.h"
+#include "clang/Lex/PreprocessorOptions.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/ASTConsumer.h"
@@ -74,25 +74,24 @@ int main()
   DiagnosticOptions diagnosticOptions;
   ci.createDiagnostics();
 
-  llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
+    std::shared_ptr<clang::TargetOptions> pto = std::make_shared<clang::TargetOptions>();
   pto->Triple = llvm::sys::getDefaultTargetTriple();
-  llvm::IntrusiveRefCntPtr<TargetInfo> pti(TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto.getPtr()));
-  ci.setTarget(pti.getPtr());
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), pto);
+    ci.setTarget(pti);
 
   ci.createFileManager();
   ci.createSourceManager(ci.getFileManager());
-  ci.createPreprocessor();
+  ci.createPreprocessor(clang::TU_Complete);
   ci.getPreprocessorOpts().UsePredefines = false;
-  MyASTConsumer *astConsumer = new MyASTConsumer();
-  ci.setASTConsumer(astConsumer);
+  ci.setASTConsumer(llvm::make_unique<MyASTConsumer>());
 
   ci.createASTContext();
 
   const FileEntry *pFile = ci.getFileManager().getFile("test.c");
-  ci.getSourceManager().createMainFileID(pFile);
+    ci.getSourceManager().setMainFileID( ci.getSourceManager().createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
   ci.getDiagnosticClient().BeginSourceFile(ci.getLangOpts(),
                                            &ci.getPreprocessor());
-  clang::ParseAST(ci.getPreprocessor(), astConsumer, ci.getASTContext());
+  clang::ParseAST(ci.getPreprocessor(), &ci.getASTConsumer(), ci.getASTContext());
   ci.getDiagnosticClient().EndSourceFile();
 
   return 0;

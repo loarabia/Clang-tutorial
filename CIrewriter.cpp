@@ -4,7 +4,7 @@
  *
  * This tutorial was written by Robert Ankeney.
  * Send comments to rrankene@gmail.com.
- * 
+ *
  * This tutorial is an example of using the Clang Rewriter class coupled
  * with the RecursiveASTVisitor class to parse and modify C code.
  *
@@ -49,11 +49,11 @@
  * Note: This tutorial uses the CompilerInstance object which has as one of
  * its purposes to create commonly used Clang types.
  *****************************************************************************/
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <vector>
+#include <system_error>
 
 #include "llvm/Support/Host.h"
 #include "llvm/Support/raw_ostream.h"
@@ -69,6 +69,7 @@
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Lex/Preprocessor.h"
+#include "clang/Lex/PreprocessorOptions.h"
 #include "clang/Lex/Lexer.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/AST/RecursiveASTVisitor.h"
@@ -211,7 +212,7 @@ bool MyRecursiveASTVisitor::VisitFunctionDecl(FunctionDecl *f)
 
     // Make a stab at determining return type
     // Getting actual return type is trickier
-    QualType q = f->getResultType();
+    QualType q = f->getReturnType();
     const Type *typ = q.getTypePtr();
 
     std::string ret;
@@ -300,18 +301,17 @@ int main(int argc, char **argv)
   //compiler.createDiagnostics(argc, argv);
 
   // Create an invocation that passes any flags to preprocessor
-  CompilerInvocation *Invocation = new CompilerInvocation;
+  CompilerInvocation *rawInvocation = new CompilerInvocation;
+  std::shared_ptr<CompilerInvocation> Invocation(rawInvocation);
   CompilerInvocation::CreateFromArgs(*Invocation, argv + 1, argv + argc,
                                       compiler.getDiagnostics());
   compiler.setInvocation(Invocation);
 
   // Set default target triple
-  llvm::IntrusiveRefCntPtr<TargetOptions> pto( new TargetOptions());
+    std::shared_ptr<clang::TargetOptions> pto = std::make_shared<clang::TargetOptions>();
   pto->Triple = llvm::sys::getDefaultTargetTriple();
-  llvm::IntrusiveRefCntPtr<TargetInfo>
-     pti(TargetInfo::CreateTargetInfo(compiler.getDiagnostics(),
-                                      pto.getPtr()));
-  compiler.setTarget(pti.getPtr());
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(compiler.getDiagnostics(), pto);
+  compiler.setTarget(pti);
 
   compiler.createFileManager();
   compiler.createSourceManager(compiler.getFileManager());
@@ -331,15 +331,11 @@ int main(int argc, char **argv)
   // To see what include paths need to be here, try
   // clang -v -c test.c
   // or clang++ for C++ paths as used below:
-  headerSearchOptions.AddPath("/usr/include/c++/4.6",
+  headerSearchOptions.AddPath("/usr/include/c++/7",
           clang::frontend::Angled,
           false,
           false);
-  headerSearchOptions.AddPath("/usr/include/c++/4.6/i686-linux-gnu",
-          clang::frontend::Angled,
-          false,
-          false);
-  headerSearchOptions.AddPath("/usr/include/c++/4.6/backward",
+  headerSearchOptions.AddPath("/usr/include/c++/7/backward",
           clang::frontend::Angled,
           false,
           false);
@@ -347,11 +343,7 @@ int main(int argc, char **argv)
           clang::frontend::Angled,
           false,
           false);
-  headerSearchOptions.AddPath("/usr/local/lib/clang/3.3/include",
-          clang::frontend::Angled,
-          false,
-          false);
-  headerSearchOptions.AddPath("/usr/include/i386-linux-gnu",
+  headerSearchOptions.AddPath("/usr/local/lib/clang/5.0.1/include",
           clang::frontend::Angled,
           false,
           false);
@@ -364,18 +356,22 @@ int main(int argc, char **argv)
 
   // Allow C++ code to get rewritten
   LangOptions langOpts;
-  langOpts.GNUMode = 1; 
-  langOpts.CXXExceptions = 1; 
-  langOpts.RTTI = 1; 
-  langOpts.Bool = 1; 
-  langOpts.CPlusPlus = 1; 
+  langOpts.GNUMode = 1;
+  langOpts.CXXExceptions = 1;
+  langOpts.RTTI = 1;
+  langOpts.Bool = 1;
+  langOpts.CPlusPlus = 1;
+  TargetOptions &TO = compiler.getTargetOpts();
+  llvm::Triple T(TO.Triple);
   Invocation->setLangDefaults(langOpts,
-                              clang::IK_CXX,
-                              clang::LangStandard::lang_cxx0x);
+                              clang::InputKind::Language::CXX,
+                              T,
+                              compiler.getPreprocessorOpts(),
+                              clang::LangStandard::lang_cxx14);
 
-  compiler.createPreprocessor();
+
+  compiler.createPreprocessor(clang::TU_Complete);
   compiler.getPreprocessorOpts().UsePredefines = false;
-
   compiler.createASTContext();
 
   // Initialize rewriter
@@ -383,7 +379,7 @@ int main(int argc, char **argv)
   Rewrite.setSourceMgr(compiler.getSourceManager(), compiler.getLangOpts());
 
   const FileEntry *pFile = compiler.getFileManager().getFile(fileName);
-  compiler.getSourceManager().createMainFileID(pFile);
+    compiler.getSourceManager().setMainFileID( compiler.getSourceManager().createFileID( pFile, clang::SourceLocation(), clang::SrcMgr::C_User));
   compiler.getDiagnosticClient().BeginSourceFile(compiler.getLangOpts(),
                                                 &compiler.getPreprocessor());
 
@@ -397,10 +393,11 @@ int main(int argc, char **argv)
   outName.insert(ext, "_out");
 
   llvm::errs() << "Output to: " << outName << "\n";
-  std::string OutErrorInfo;
-  llvm::raw_fd_ostream outFile(outName.c_str(), OutErrorInfo, llvm::sys::fs::F_None);
+  std::error_code OutErrorInfo;
+  std::error_code ok;
+  llvm::raw_fd_ostream outFile(llvm::StringRef(outName), OutErrorInfo, llvm::sys::fs::F_None);
 
-  if (OutErrorInfo.empty())
+  if (OutErrorInfo == ok)
   {
     // Parse the AST
     ParseAST(compiler.getPreprocessor(), &astConsumer, compiler.getASTContext());

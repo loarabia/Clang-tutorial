@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "llvm/Support/CommandLine.h"
 
@@ -15,6 +16,7 @@ using namespace clang::driver;
 using namespace clang::tooling;
 using clang::FileID;
 
+static llvm::cl::OptionCategory MyToolCategory("");
 
 /******************************************************************************
  *
@@ -91,10 +93,10 @@ class MyFactory : public clang::ASTFrontendAction
     MyCommentHandler ch;
 
   public:
-    clang::ASTConsumer *CreateASTConsumer(clang::CompilerInstance &ci, llvm::StringRef inFile) {
+    std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &ci, llvm::StringRef inFile) {
       ch.set_InFile(inFile);
       ci.getPreprocessor().addCommentHandler(&ch);
-      return new MyASTConsumer();
+      return llvm::make_unique<MyASTConsumer>();
     }
 
 };
@@ -106,10 +108,10 @@ class MyFactory : public clang::ASTFrontendAction
  *****************************************************************************/
 int main(int argc, const char **argv)
 {
-  CommonOptionsParser OptionsParser(argc, argv);
+  CommonOptionsParser OptionsParser(argc, argv, MyToolCategory);
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
-  FrontendActionFactory *factory = newFrontendActionFactory<tooling::MyFactory>();
-  Tool.run(factory);
+  std::unique_ptr<FrontendActionFactory> factory = newFrontendActionFactory<tooling::MyFactory>();
+  Tool.run(factory.get());
   return 0;
 }
