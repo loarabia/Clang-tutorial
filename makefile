@@ -1,17 +1,12 @@
-CXX := clang++
-LLVMCOMPONENTS := cppbackend
+CXX := /usr/local/bin/clang++
+LLVMCOMPONENTS :=
 RTTIFLAG := -fno-rtti
-LLVMCONFIG := /Users/loarabia/Code/cl34/bin/llvm-config
+LLVMCONFIG := /usr/local/bin/llvm-config
 
 CXXFLAGS := -I$(shell $(LLVMCONFIG) --src-root)/tools/clang/include -I$(shell $(LLVMCONFIG) --obj-root)/tools/clang/include $(shell $(LLVMCONFIG) --cxxflags) $(RTTIFLAG)
 LLVMLDFLAGS := $(shell $(LLVMCONFIG) --ldflags --libs $(LLVMCOMPONENTS))
 
-SOURCES = tutorial1.cpp \
-    tutorial2.cpp \
-    tutorial3.cpp \
-    tutorial4.cpp \
-    tutorial6.cpp \
-    CItutorial1.cpp \
+SOURCES = CItutorial1.cpp \
     CItutorial2.cpp \
     CItutorial3.cpp \
     CItutorial4.cpp \
@@ -37,13 +32,14 @@ CLANGLIBS = \
 				-lclangStaticAnalyzerCore\
 				-lclangAnalysis\
 				-lclangARCMigrate\
+				-lclangRewrite\
 				-lclangRewriteFrontend\
-				-lclangRewriteCore\
 				-lclangEdit\
 				-lclangAST\
 				-lclangLex\
 				-lclangBasic\
 				$(shell $(LLVMCONFIG) --libs)\
+				$(shell $(LLVMCONFIG) --system-libs)\
                 -lcurses
 
 all: $(OBJECTS) $(EXES)
